@@ -17,7 +17,8 @@ domready ->
     F.Ranges.insertBoundaries()
 
     try
-      tokens = F.Lexer.tokenize workspaceEl.innerText
+      tokens = F.Lexer.tokenize regexpStr = workspaceEl.innerText
+      console.log new RegExp regexpStr
 
       formatter = new F.Formatter(tokens)
       formattedHTML = formatter.format()

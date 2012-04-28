@@ -11,8 +11,8 @@ F.Lexer = class Lexer
     OR: /^\|/
     RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
     CHAR_GROUP: /^(\[\^?)((?:\\\]|.)+?)\]/
-    OTHER: /^[^\(\)\|\[\]\?\+\*\^\$\\\ufeff]+/
-    COMMENT: /^#\s*(.*?)\s*$/
+    OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\ufeff]+/
+    COMMENT: /^\#\s*(.*)\s*$/m
 
   @tokenize: (regexpStr) ->
     i = 0
@@ -33,6 +33,10 @@ F.Lexer = class Lexer
           tokens.push ['WHITESPACE', matched_text]
         else
           tokens.push ['ESCAPED', matched_text]
+      else if match = Lexer.tokens.COMMENT.exec chunk
+        [matched_text, comment] = match
+        i += matched_text.length
+        tokens.push ['COMMENT', comment]
       else if match = Lexer.tokens.INPUT_START.exec chunk
         [matched_text] = match
         i += matched_text.length
@@ -71,13 +75,10 @@ F.Lexer = class Lexer
         tokens.push ['CHAR_GROUP_START', start]
         tokens.push ['CHAR_GROUP', characters]
         tokens.push ['CHAR_GROUP_END', ']']
-      else if match = Lexer.tokens.COMMENT.exec chunk
-        [matched_text, comment] = match
-        i += matched_text.length
-        tokens.push ['COMMENT', comment]
       else if match = Lexer.tokens.OTHER.exec chunk
         [matched_text] = match
         i += matched_text.length
         tokens.push ['', matched_text]
 
+    console.log tokens
     return tokens
