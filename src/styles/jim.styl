@@ -1,0 +1,74 @@
+body
+  margin 0
+  box-sizing border-box
+  font-size 12px
+  font-family 'PT Mono', sans-serif
+  color #888
+  background #f8f8f8 // url(/images/background-light.png)
+  padding 20px
+
+.outer
+  background rgba(0, 0, 0, 0.1)
+  padding 4px
+  margin 0 20px 40px
+  border-radius 4px
+
+  .inner
+    padding 20px
+    border 1px solid rgba(0, 0, 0, 0.2)
+    cursor text
+    background #f8f8f8
+
+    &:focus
+      outline none
+
+.columns
+  overflow hidden
+
+  > .left
+  > .right
+    float left
+    width 50%
+
+.testarea
+  line-height 18px
+
+  .match
+    border 1px solid #cc2
+    background #ffc
+    border-radius 2px
+
+  > p
+    margin 0 0 10px
+
+    &:last-child
+      margin 0
+
+.workspace
+  line-height 18px
+
+  span.suggestion
+    color #ccc
+
+  div
+    margin 0
+    padding 2px
+    border-radius 4px
+    white-space pre
+
+    &:hover
+      background #fcfcfc
+      color #666
+
+      span.comment
+        color #666
+
+    span.comment
+      color #ccc
+      float right
+      display inline-block
+      width 80%
+      text-align left
+
+      &.warn
+        color #884

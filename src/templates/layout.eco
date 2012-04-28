@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <title>REGEXer</title>
+
+  <link href="/favicon.png" rel="shortcut icon">
+
+</head>
+<body>
+
+  <%- @body %>
+
+  <script src="/scripts/deps/ender.min.js"></script>
+  <script src="/scripts/main.js"></script>
+  <script src="/scripts/ranges.js"></script>
+  <script src="/scripts/lexer.js"></script>
+  <script src="/scripts/formatter.js"></script>
+
+</body>
+</html>

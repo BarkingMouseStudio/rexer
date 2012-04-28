@@ -1,0 +1,23 @@
+<link href='http://fonts.googleapis.com/css?family=PT+Mono' rel='stylesheet'>
+<link href='/styles/jim.css' rel='stylesheet'>
+
+<div class='columns'>
+  <div class='left'>
+    <div class='outer'>
+      <div id='workspace' class='workspace inner' spellcheck='false' contenteditable>
+        \b((?:https:\/\/|www\d{0,3}[.]|[a-z0-9.\-][.][a-z]{2,4}/)(?:[^\s()<>]|\(([^\s()<>]|(\([^\s()<>]\)))\))(?:\(([^\s()<>]|(\([^\s()<>]\)))\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))
+      </div>
+    </div>
+  </div>
+  <div class='right'>
+    <div class='outer'>
+      <div class='testarea inner' spellcheck='false' contenteditable>
+        <p>Corned beef <span class='match'>andouille</span> capicola, strip steak meatball leberkas turkey shoulder cow venison spare ribs biltong pork chop hamburger. Capicola shoulder chicken frankfurter, short ribs tenderloin short loin tri-tip sirloin ribeye andouille jerky meatball. Spare ribs tail hamburger tri-tip, swine bacon ball tip beef ribs pastrami jowl strip steak sausage venison. Fatback spare ribs frankfurter, short ribs drumstick turkey pork belly. Flank spare ribs brisket tri-tip, short ribs ball tip shoulder frankfurter swine fatback boudin tongue beef ribs. Corned beef swine prosciutto pig meatball short loin, chicken ham hock strip steak spare ribs bacon kielbasa jerky. Capicola sirloin t-bone jowl shankle beef.</p>
+        <p>Pork cow tri-tip drumstick tail short loin, boudin filet mignon pork loin tenderloin ham hock pig t-bone pork belly jerky. Pork andouille chuck chicken hamburger sausage. Ham pork loin corned beef capicola chuck pig, kielbasa hamburger short ribs tri-tip jerky strip steak sausage cow. Andouille short ribs ham hock tri-tip pancetta venison tenderloin speck sirloin.</p>
+        <p>Prosciutto beef short loin hamburger turducken rump. Pig turkey short ribs rump pancetta tri-tip pork chop cow hamburger, ribeye ball tip shankle. Shankle meatloaf biltong fatback turducken, ham hock tri-tip pancetta salami tongue bresaola. Ground round tenderloin filet mignon shank. Ribeye short ribs prosciutto bresaola, meatloaf sirloin leberkas sausage capicola hamburger salami turducken strip steak pork loin.</p>
+        <p>Short ribs capicola shankle ham hock. Shank corned beef flank, sirloin pork tri-tip short loin. T-bone pork corned beef tail. Jowl short loin prosciutto, ham bacon beef ribs ham hock hamburger drumstick capicola corned beef jerky shankle venison.</p>
+        <p>Pork shankle tri-tip ball tip, drumstick t-bone brisket bacon ham ground round. Chuck capicola ground round bresaola. Chicken pancetta venison, shankle tongue beef meatloaf t-bone prosciutto pig rump. Andouille beef fatback, tongue tri-tip beef ribs cow ball tip filet mignon speck corned beef biltong meatball ham sausage. Jerky cow meatloaf pork belly, tongue pork beef ribs fatback meatball shank tri-tip tail tenderloin. Ground round shank pig ham hock bresaola pork belly, ham cow fatback.</p>
+      </div>
+    </div>
+  </div>
+</div>
