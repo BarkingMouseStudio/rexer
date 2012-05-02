@@ -16,16 +16,22 @@ domready ->
     F.Ranges.clearBoundaries(workspaceEl)
     F.Ranges.insertBoundaries()
 
-    try
-      tokens = F.Lexer.tokenize regexpStr = workspaceEl.innerText
-      console.log new RegExp regexpStr
+    tokens = F.Lexer.tokenize(regexpStr = workspaceEl.innerText)
+    console.log tokens.map (token) ->
+      [tag, value] = token
+      return tag
+    F.Ranges.clearBoundaries(workspaceEl)
 
-      formatter = new F.Formatter(tokens)
-      formattedHTML = formatter.format()
+    ###
+    formatter = new F.Formatter(tokens)
 
-      workspaceEl.innerHTML = ''
-      workspaceEl.appendChild(formattedHTML)
+    [formattedEl, ranges] = formatter.format()
 
-      formatter.createRanges()
-    catch err
-      F.Ranges.clearBoundaries(workspaceEl)
+    workspaceEl.innerHTML = ''
+    workspaceEl.appendChild(formattedEl)
+
+    F.Ranges.clearRanges()
+    while rangeData = ranges.pop()
+      range = F.Ranges.createRange(rangeData.startEl.childNodes[0], rangeData.startOffset, rangeData.endEl.childNodes[0], rangeData.endOffset)
+      F.Ranges.addRange(range)
+      ###
