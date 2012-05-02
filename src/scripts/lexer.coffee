@@ -15,13 +15,12 @@ F.Lexer = class Lexer
     OR: /^\|/
     RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
     CHAR_GROUP: /^(\[\^?)((?:\\\]|.)+?)\]/
-    OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\ufeff\ \n]+/
-    WHITESPACE: /^[\ \n]+/
+    OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\s*]+/
+    WHITESPACE: /^\s+/
     COMMENT: /^\ \#\ (.*)\s*$/m
 
   # Controls the tokenization priority
   @token_priority: [
-    'SELECTION_BOUNDARY'
     'WHITESPACE'
     'SPECIAL_CHAR'
     'WHITESPACE_CHAR'
@@ -39,6 +38,10 @@ F.Lexer = class Lexer
     'OTHER'
   ]
 
+  @blacklisted_tokens: [
+    'WHITESPACE'
+  ]
+
   # Main function of the `Lexer` which returns a `Array` of tokens
   @tokenize: (regexpStr) ->
     # Maintain an index within the RegExp-string
@@ -47,8 +50,17 @@ F.Lexer = class Lexer
     # The token
     tokens = []
 
+    # Maintain the next selection boundary index...
+    nextSelectionIndex = -1
+
+    # ...and whether the token contains a selection boundary
+    tokenContainsSelection = false
+
     # Create chunks by slicing the string from the current index to the end
     while chunk = regexpStr[i..]
+      if nextSelectionIndex < i
+        nextSelectionIndex = chunk.indexOf(Lexer.token_regex['SELECTION_BOUNDARY'])
+        chunk.replace(Lexer.token_regex['SELECTION_BOUNDARY'], '')
 
       # For each token-kind...
       for token_kind in Lexer.token_priority
@@ -64,8 +76,10 @@ F.Lexer = class Lexer
         # Move `i` (the current index) forward by the match's length
         i += matched_text.length
 
-        # Add the new token to the token stream
-        tokens.push [token_kind, matched_text]
+        # Add the new token to the token stream if its not blacklisted
+        if token_kind not in Lexer.blacklisted_tokens
+          tokens.push [token_kind, matched_text]
+
         break
 
     # Return the tokens

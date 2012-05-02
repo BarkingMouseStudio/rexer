@@ -21,20 +21,19 @@ F.Formatter = class Formatter
     rangeData = {}
 
     while token = @tokens.shift()
-      [tag, value] = token 
+      [tag, value, selection] = token 
+
+      if contains_selection
+        if rangeData.startOffset?
+          rangeData.endEl = @lastEl
+          rangeData.endOffset = @lastEl.innerText.length
+          @rangeData.push(rangeData)
+          rangeData = {}
+        else
+          rangeData.startEl = @lastEl
+          rangeData.startOffset = @lastEl.innerText.length
 
       switch tag
-        when 'SELECTION_BOUNDARY'
-          console.log tag
-          continue
-          if rangeData.startOffset?
-            rangeData.endEl = @lastEl
-            rangeData.endOffset = @lastEl.innerText.length
-            @rangeData.push(rangeData)
-            rangeData = {}
-          else
-            rangeData.startEl = @lastEl
-            rangeData.startOffset = @lastEl.innerText.length
         when 'GROUP_START'
           newParentEl = document.createElement 'div'
           newParentEl.className = 'group_wrapper'

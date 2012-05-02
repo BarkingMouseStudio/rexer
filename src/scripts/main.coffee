@@ -17,12 +17,8 @@ domready ->
     F.Ranges.insertBoundaries()
 
     tokens = F.Lexer.tokenize(regexpStr = workspaceEl.innerText)
-    console.log tokens.map (token) ->
-      [tag, value] = token
-      return tag
-    F.Ranges.clearBoundaries(workspaceEl)
+    return
 
-    ###
     formatter = new F.Formatter(tokens)
 
     [formattedEl, ranges] = formatter.format()
@@ -34,4 +30,3 @@ domready ->
     while rangeData = ranges.pop()
       range = F.Ranges.createRange(rangeData.startEl.childNodes[0], rangeData.startOffset, rangeData.endEl.childNodes[0], rangeData.endOffset)
       F.Ranges.addRange(range)
-      ###
