@@ -1,8 +1,10 @@
+log = ->
+  console.log.apply(console, arguments)
+
 F.Lexer = class Lexer
 
   # Token-matching RegExps
-  @token_regex:
-    SELECTION_BOUNDARY: /^\ufeff/
+  @tokenRegex:
     SPECIAL_CHAR: /^\\[wWdDsSbB]/
     WHITESPACE_CHAR: /^\\[tnr]/
     ESCAPED_CHAR: /^\\./
@@ -20,7 +22,7 @@ F.Lexer = class Lexer
     COMMENT: /^\ \#\ (.*)\s*$/m
 
   # Controls the tokenization priority
-  @token_priority: [
+  @tokenPriority: [
     'WHITESPACE'
     'SPECIAL_CHAR'
     'WHITESPACE_CHAR'
@@ -38,48 +40,65 @@ F.Lexer = class Lexer
     'OTHER'
   ]
 
-  @blacklisted_tokens: [
-    'WHITESPACE'
-  ]
+  @blacklistedTokens: [ 'WHITESPACE' ]
+
+  @whitespaceChar: /\ufeff/
 
   # Main function of the `Lexer` which returns a `Array` of tokens
-  @tokenize: (regexpStr) ->
-    # Maintain an index within the RegExp-string
-    i = 0
+  @tokenize: (chunk) ->
+    # Starting offset within the RegExp-string for the current chunk
+    startOffset = 0
 
-    # The token
+    # `Array` of collected tokens
     tokens = []
 
-    # Maintain the next selection boundary index...
-    nextSelectionIndex = -1
+    # Next selection boundary index
+    nextSelectionIndex = null
 
-    # ...and whether the token contains a selection boundary
-    tokenContainsSelection = false
+    # Iterate of the remaining regexp string until its all gone
+    while chunk
 
-    # Create chunks by slicing the string from the current index to the end
-    while chunk = regexpStr[i..]
-      if nextSelectionIndex < i
-        nextSelectionIndex = chunk.indexOf(Lexer.token_regex['SELECTION_BOUNDARY'])
-        chunk.replace(Lexer.token_regex['SELECTION_BOUNDARY'], '')
+      # Get the next selection index in the chunk
+      if nextSelectionIndex isnt -1 and nextSelectionIndex <= startOffset
+        chunk = chunk.replace Lexer.whitespaceChar, (match, parts..., offset, str) ->
+          nextSelectionIndex = offset
+          ""
+        log chunk
 
       # For each token-kind...
-      for token_kind in Lexer.token_priority
+      for tokenKind in Lexer.tokenPriority
+
         # ...try matching the RegExp-string (from the beginning of the string)
-        unless match = Lexer.token_regex[token_kind].exec chunk
+        unless match = Lexer.tokenRegex[tokenKind].exec chunk
           # Move on to the next token
           continue
 
-        # If a match is found:
         # Break out the matched text from the regex
-        [matched_text] = match
+        [matchedText] = match
 
-        # Move `i` (the current index) forward by the match's length
-        i += matched_text.length
+        # Get the end offset of the match
+        endOffset = startOffset + matchedText.length
+        tokenContainsSelection = false
+        tokenSelectionIndex = -1
+
+        # If the selection boundary is within the match keep the offset within
+        if startOffset <= nextSelectionIndex <= endOffset
+          tokenContainsSelection = true
+          tokenSelectionIndex = nextSelectionIndex - startOffset
+
+        # Advance the start offset for the next match
+        startOffset = endOffset
+
+        # Move the regexp string forward
+        chunk = chunk[matchedText.length..]
 
         # Add the new token to the token stream if its not blacklisted
-        if token_kind not in Lexer.blacklisted_tokens
-          tokens.push [token_kind, matched_text]
+        if tokenKind not in Lexer.blacklistedTokens
+          if tokenContainsSelection
+            log tokenKind, matchedText, tokenSelectionIndex
+          tokens.push [tokenKind, matchedText, tokenContainsSelection, tokenSelectionIndex]
 
+        # Stop searching
         break
 
     # Return the tokens

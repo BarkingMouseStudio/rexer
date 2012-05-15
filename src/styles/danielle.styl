@@ -1,10 +1,15 @@
 body
-  padding 0
+  padding 24px
   margin 0
+  top 0
+  bottom 0
   box-sizing border-box
   font 14px/16px 'Helvetica Neue', 'Helvetica', Arial, sans-serif
-  color #777  
-  background #fafafa 
+  color rgba(206,199,183,1)  
+  color #666
+  text-shadow  0px 2px 2px rgba(255, 255, 255, 0.4);
+  background rgba(229,221,208, .3)
+  border-right 6px solid rgb(162,40,101)
   p 
     margin 0 0 24px 0
     padding 0
@@ -22,22 +27,13 @@ body
     font-weight normal
     
   .mainheader
-    border-bottom 1px solid #eaeaea
-    background #fefefe
-    /*
-        background-image -moz-linear-gradient(top,#fefefe,#f6f6f6)
-        background-image -webkit-gradient(linear,left top,left bottom,from(#fefefe),to(#f6f6f6))
-    */
-    padding 6px 2.5% 6px 2.5%
-    position fixed
-    left 0
-    right 0
-    top 0
-    z-index 1
+    float left
+    width 15%
+    margin-top 8px
     
     h1, p 
       display inline-block
-      margin 0
+      margin 24px 12px
       padding 0
       &.share 
         display block
@@ -45,22 +41,23 @@ body
         text-align right
         
   .mainarea
-    border-radius 2px
+    margin-top 36px
+    float left
+    width 85%
     background #fff url(/images/divider.png) center center repeat-y
-    border 1px solid #eaeaea
     position relative
-    margin 98px auto
-    width 95%
+    
 
     section
       float left
       width 50%
-      margin -32px 0 0 0
+      margin-top -32px
       min-height 100px
  
       header 
         padding-left 24px
-      div
+      
+      & > div
         padding 24px
         cursor text
     
@@ -70,21 +67,34 @@ body
         &.workarea
           font-family 'PTMono', monospace
           color black
-          p 
-            margin 0
-            
-          span.suggestion
-            color #666
-          
-          span.comment
-            color #ccc
-            float right
-            display inline-block
-            width 60%
-            text-align left
+      p 
+        margin 0
+      
+      .group_wrapper
+        /*
+        border-left 3px solid orange
+        border-right 3px solid blue
+        */
+      span
+        display inline-block
+      
+      span.indent
+        border 1px solid #dedede
+        height 100%
+        content "foo"
         
-            &.warn
-              color #884
+      span.suggestion
+        color #666
+      
+      span.comment
+        color #ccc
+        float right
+        display inline-block
+        width 60%
+        text-align left
+    
+        &.warn
+          color #884
         
         &.testarea
         
@@ -125,11 +135,11 @@ body
 
   .group:before
   .group:after 
-      content ""
-      display table
+    content ""
+    display table
   
   .group:after
-      clear both
+    clear both
       
       
       

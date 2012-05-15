@@ -1,10 +1,9 @@
-<link href='http://fonts.googleapis.com/css?family=PT+Mono' rel='stylesheet'>
-<link href='/fonts/latin-modern-mono/fontface.css' rel='stylesheet'>
+<link href='http://fonts.googleapis.com/css?family=Vast+Shadow' rel='stylesheet' type='text/css'>
 <link href="/styles/danielle.css" rel="stylesheet">
 
 <header class="mainheader">
   <h1>OPEN REGEXer</h1>
-  <p>an <a href="//applio.us">applio.us</a> / <a href="//freeflow.io">freeflow labs</a> production</p>
+  <p>an <a href="//applio.us">applio.us</a> / <a href="//freeflow.io">freeflow</a> production</p>
   <p class="share"><a href="#sharelinkgoeshere">share</a></p>
 </header>
 
@@ -13,13 +12,12 @@
     <header>
       <h2>new regEx: -></h2>
     </header>
-      <div id='workspace' class='workspace inner' spellcheck='false' contenteditable>
+      <div id='workarea' class='workarea inner' spellcheck='false' contenteditable>
         <div>
           <span class="token special_char">\b</span>
           <div class="group_wrapper">
             <span class="token group_start">(</span>
             <div class="group_content">
-              <span class="token indent">  </span>
               <div class="group_wrapper">
                 <span class="token indent">  </span>
                 <span class="token group_start">(?:</span>
@@ -83,10 +81,7 @@
                         <span class="token indent">  </span>
                         <span class="token or">|</span>
                       </div>
-                      <span class="token indent">  </span>
-                      <span class="token indent">  </span>
-                      <span class="token indent">  </span>
-                      <div class="group_wrapper">
+                     <div class="group_wrapper">
                         <span class="token indent">  </span>
                         <span class="token indent">  </span>
                         <span class="token indent">  </span>
@@ -137,9 +132,6 @@
                         <span class="token indent">  </span>
                         <span class="token or">|</span>
                       </div>
-                      <span class="token indent">  </span>
-                      <span class="token indent">  </span>
-                      <span class="token indent">  </span>
                       <div class="group_wrapper">
                         <span class="token indent">  </span>
                         <span class="token indent">  </span>
@@ -194,6 +186,7 @@
   </section>
 </section>
 
+<!--
 <footer>
   <nav>
     <ul class="github">
@@ -206,3 +199,4 @@
     <a href="mailto:thosepeopleareus@applio.us">thosepeopleareus@applio.us</a>
   </address>
 </footer>
+-->
