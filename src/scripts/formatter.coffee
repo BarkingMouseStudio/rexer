@@ -23,14 +23,14 @@ F.Formatter = class Formatter
     while token = @tokens.shift()
       [tag, value, selection] = token 
 
-      if contains_selection
+      if selection
         if rangeData.startOffset?
-          rangeData.endEl = @lastEl
+          rangeData.endNode = @lastEl.childNodes[0]
           rangeData.endOffset = @lastEl.innerText.length
           @rangeData.push(rangeData)
           rangeData = {}
         else
-          rangeData.startEl = @lastEl
+          rangeData.startNode = @lastEl.childNodes[0]
           rangeData.startOffset = @lastEl.innerText.length
 
       switch tag

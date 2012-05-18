@@ -1,0 +1,201 @@
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+<link href="/styles/danielle.css" rel="stylesheet">
+
+<header id="mainheader">
+  <h1>rexer</h1>
+  <p>an <a href="//applio.us">applio.us</a> / <a href="//freeflow.io">freeflow</a> production</p>
+  <p class="button"><a href="#sharelinkgoeshere">share</a></p>
+</header>
+
+
+<section id="mainarea" class="group">    
+<!--  <section id='workarea-section'>
+    <header>
+      <h2>regex <span class="small">=></span></h2>
+    </header>
+      <div id='workarea' class='workarea inner' spellcheck='false' contenteditable>
+        <div>
+          <span class="token special_char">\b</span>
+          <div class="group_wrapper">
+            <span class="token group_start">(</span>
+            <div class="group_content">
+              <div class="group_wrapper">
+                <span class="token indent">  </span>
+                <span class="token group_start">(?:</span>
+                <div class="group_content">
+                  <span class="token indent">  </span>
+                  <span class="token indent">  </span>
+                  <span class="token escaped_char">\/</span>
+                  <span class="token escaped_char">\/</span>
+                  <div class="or">
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token or">|</span>
+                  </div>
+                  <span class="token indent">  </span>
+                  <span class="token indent">  </span>
+                  <span class="token special_char">\d</span>
+                  <span class="token range">{0,3}</span>
+                  <span class="token char_group">[.]</span>
+                  <div class="or">
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token or">|</span>
+                  </div>
+                  <span class="token indent">  </span>
+                  <span class="token indent">  </span>
+                  <span class="token char_group">[a-﻿z0-9.\-]</span>
+                  <span class="token char_group">[.]</span>
+                  <span class="token char_group">[a-z]</span>
+                  <span class="token range">{2,4}</span>
+                </div>
+                <span class="token indent">  </span>
+                <span class="token group_end">)</span>
+              </div>
+              <div class="group_wrapper">
+                <span class="token indent">  </span>
+                <span class="token group_start">(?:</span>
+                <div class="group_content">
+                  <span class="token indent">  </span>
+                  <span class="token indent">  </span>
+                  <span class="token char_group">[^\s()&lt;&gt;]</span>
+                  <div class="or">
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token or">|</span>
+                  </div>
+                  <span class="token indent">  </span>
+                  <span class="token indent">  </span>
+                  <span class="token escaped_char">\(</span>
+                  <div class="group_wrapper">
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token group_start">(</span>
+                    <div class="group_content">
+                      <span class="token indent">  </span>
+                      <span class="token indent">  </span>
+                      <span class="token indent">  </span>
+                      <span class="token char_group">[^\s()&lt;&gt;]</span>
+                      <div class="or">
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token or">|</span>
+                      </div>
+                     <div class="group_wrapper">
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token group_start">(</span>
+                        <div class="group_content">
+                          <span class="token indent">  </span>
+                          <span class="token indent">  </span>
+                          <span class="token indent">  </span>
+                          <span class="token indent">  </span>
+                          <span class="token escaped_char">\(</span>
+                          <span class="token char_group">[^\s()&lt;&gt;]</span>
+                          <span class="token escaped_char">\)</span>
+                        </div>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token group_end">)</span>
+                      </div>
+                    </div>
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token group_end">)</span>
+                  </div>
+                  <span class="token escaped_char">\)</span>
+                </div>
+                <span class="token indent">  </span>
+                <span class="token group_end">)</span>
+              </div>
+              <div class="group_wrapper">
+                <span class="token indent">  </span>
+                <span class="token group_start">(?:</span>
+                <div class="group_content">
+                  <span class="token indent">  </span>
+                  <span class="token indent">  </span>
+                  <span class="token escaped_char">\(</span>
+                  <div class="group_wrapper">
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token group_start">(</span>
+                    <div class="group_content">
+                      <span class="token indent">  </span>
+                      <span class="token indent">  </span>
+                      <span class="token indent">  </span>
+                      <span class="token char_group">[^\s﻿()&lt;&gt;]</span>
+                      <div class="or">
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token or">|</span>
+                      </div>
+                      <div class="group_wrapper">
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token group_start">(</span>
+                        <div class="group_content">
+                          <span class="token indent">  </span>
+                          <span class="token indent">  </span>
+                          <span class="token indent">  </span>
+                          <span class="token indent">  </span>
+                          <span class="token escaped_char">\(</span>
+                          <span class="token char_group">[^\s()&lt;&gt;]</span>
+                          <span class="token escaped_char">\)</span>
+                        </div>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token indent">  </span>
+                        <span class="token group_end">)</span>
+                      </div>
+                    </div>
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token group_end">)</span>
+                  </div>
+                  <span class="token escaped_char">\)</span>
+                  <div class="or">
+                    <span class="token indent">  </span>
+                    <span class="token indent">  </span>
+                    <span class="token or">|</span>
+                  </div>
+                  <span class="token indent">  </span>
+                  <span class="token indent">  </span>
+                  <span class="token char_group">[^\s`!()\[\]{};:'".,&lt;&gt;?«»“”‘’]</span>
+                </div>
+                  <span class="token indent">  </span>
+                  <span class="token group_end">)</span>
+                </div>
+              </div>
+              <span class="token group_end">)</span>
+            </div>
+          </div>
+      </div>
+  </section>
+  
+  <section id='testarea-section'>
+    <header>
+      <h2>test data <span class="small">=></span></h2>
+    </header>
+    <div id='testarea' spellcheck='false' contenteditable>
+      <p>Corned beef <span class='match'>andouille</span> capicola, strip steak meatball leberkas turkey shoulder cow venison spare ribs biltong pork chop hamburger. Capicola shoulder chicken frankfurter, short ribs tenderloin short loin tri-tip sirloin ribeye andouille jerky meatball. Spare ribs tail hamburger tri-tip, swine bacon ball tip beef ribs pastrami jowl strip steak sausage venison. Fatback spare ribs frankfurter, short ribs drumstick turkey pork belly. Flank spare ribs brisket tri-tip, short ribs ball tip shoulder frankfurter swine fatback boudin tongue beef ribs. Corned beef swine prosciutto pig meatball short loin, chicken ham hock strip steak spare ribs bacon kielbasa jerky. Capicola sirloin t-bone jowl shankle beef.</p>
+    </div>
+  </section>
+-->
+</section>
+
+
+<footer id="mainfooter">
+  <menu>
+    <li>github:</li>
+    <li><a href="https://github.com/applious" target="_blank" class="red">applio.us</a></li>
+    <li><a href="https://github.com/FreeFlow" target="_blank" class="red">freeflow</a></li>
+  </menu>
+  <address>
+    <a href="mailto:thosepeopleareus@applio.us">thosepeopleareus@applio.us</a>
+  </address>
+</footer>
