@@ -4,7 +4,6 @@ F.Formatter = class Formatter
     @currentParentEl = @formattedEl = document.createElement 'div'
     @previousParentEls = []
     @indent = 0
-    @rangeData = []
 
   indentText: ->
     i = @indent
@@ -21,18 +20,7 @@ F.Formatter = class Formatter
     rangeData = {}
 
     while token = @tokens.shift()
-      [tag, value, selection] = token 
-
-      if selection
-        if rangeData.startOffset?
-          rangeData.endNode = @lastEl.childNodes[0]
-          rangeData.endOffset = @lastEl.innerText.length
-          @rangeData.push(rangeData)
-          rangeData = {}
-        else
-          rangeData.startNode = @lastEl.childNodes[0]
-          rangeData.startOffset = @lastEl.innerText.length
-
+      [tag, value, index] = token 
       switch tag
         when 'GROUP_START'
           newParentEl = document.createElement 'div'
@@ -72,4 +60,10 @@ F.Formatter = class Formatter
           @indentText()
         else @appendText(value, tag)
 
-    return [@formattedEl, @rangeData]
+      if index isnt -1
+        rangeData.startNode = @lastEl.childNodes[0]
+        rangeData.startOffset = index
+        rangeData.endNode = @lastEl.childNodes[0]
+        rangeData.endOffset = index
+
+    return [@formattedEl, rangeData]

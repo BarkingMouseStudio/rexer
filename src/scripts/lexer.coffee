@@ -1,6 +1,3 @@
-apply = (fn, ctx, args) -> fn.apply(ctx, args)
-log = -> apply(console.log, console, arguments)
-
 F.Lexer = class Lexer
 
   # Token-matching RegExps
@@ -16,7 +13,7 @@ F.Lexer = class Lexer
     GROUP_END: /^\)/
     OR: /^\|/
     RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
-    CHAR_GROUP: /^(\[\^?)((?:\\\]|.)+?)\]/
+    CHAR_GROUP: /^(\[\^?)((?:(?:[^\\]\\\])|.)+?)\]/
     OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\s*]+/
     WHITESPACE: /^\s+/
     COMMENT: /^\ \#\ (.*)\s*$/m
@@ -79,14 +76,12 @@ F.Lexer = class Lexer
 
         # Get the end offset of the match
         endOffset = startOffset + matchedText.length
-        tokenContainsSelection = false
         tokenSelectionIndex = -1
         tokenStart = false
         tokenEnd = false
 
         # If the selection boundary is within the match keep the offset within
         if (startOffset <= nextSelectionIndex < endOffset) or (nextSelectionIndex is endOffset and nextSelectionIndex is length)
-          tokenContainsSelection = true
           tokenSelectionIndex = nextSelectionIndex - startOffset
 
         # Advance the start offset for the next match
@@ -96,7 +91,7 @@ F.Lexer = class Lexer
         chunk = chunk[matchedText.length..]
 
         # Add the new token to the token stream
-        tokens.push [tokenKind, matchedText, tokenContainsSelection, tokenSelectionIndex]
+        tokens.push [tokenKind, matchedText, tokenSelectionIndex]
 
         # Stop searching
         break

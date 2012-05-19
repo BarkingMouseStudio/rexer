@@ -3,68 +3,48 @@ window.F = {}
 workspaceEl = document.getElementById 'workspace'
 testEl = document.getElementById 'testarea'
 
-apply = (fn, ctx, args) -> fn.apply(ctx, args)
-log = -> apply(console.log, console, arguments)
+testMatch = ->
+  regexpStr = workspaceEl.innerText
 
-concat = Array::concat
-unit = (a) -> [a]
-push = (arr, a) -> (concat arr, (unit item))
-map = (arr, fn) -> (fn a) for a in arr
-at = (i) ->
-  (arr) ->
-    arr[i]
-pluck = (arr, i) -> (map arr, at(i))
+  # Break apart the regexpStr into its components
+  match = regexpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
 
-# strip = (str) -> str.replace(/\s+(?:#.*)?/g, '')
-# clean = (str) -> str.replace(/[\ufeff]+/g, '')
-# /\//g => '\\/'
+  return unless match
 
-testMatch = (body, flags='g') ->
+  [regexpStr, body, flags] = match
+  testMatch(body, flags)
+
+  # Remove decorators from body
+  strippedBody = body.replace(/[\ufeff\u200b]+/g, '')
+    .replace(/\//g, '\\/')
+    .replace(/([^\\])\s/g, ($0, $1) -> $1)
+
   try
-    # Replace non-escaped whitespace
-    body = body.replace /([^\\])\s/g, ($0, $1) -> $1
-
-    # Try to parse the RegExp (replacing selection boundaries)
-    regexp = new RegExp(body, flags)
+    regexp = new RegExp(strippedBody, flags)
 
     # Display RegExp matches in the test area
     testEl.innerHTML = testEl.innerText.replace(regexp, '<span class="match">$&</span>')
   catch err
     console.error err.message
 
-# Re-lex the RegExp on keyup events
+  return body
+
+testEl.addEventListener 'keyup', (e) ->
+  testMatch()
+
 workspaceEl.addEventListener 'keyup', (e) ->
   # Clean any existing selection boundary placeholders
+  # and add new selection boundary placeholders.
   F.Ranges.clearBoundaries(workspaceEl)
-
-  # Add new selection boundary placeholders
   F.Ranges.insertBoundaries()
 
-  # Grab the innerText of the el and replace unwanted whitespace characters
-  regexpStr = workspaceEl.innerText
+  body = testMatch()
 
-  # Break apart the regexpStr into its components
-  match = regexpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
-
-  # An apparently invalid regex
-  return unless match
-
-  # Get each of the regexpStr components
-  [regexpStr, body, flags] = match
-
-  # Test for matches in the test area
-  testMatch(body, flags)
-
-  # Tokenize the string
   tokens = F.Lexer.tokenize(body)
-
-  # Format the tokens
   formatter = new F.Formatter(tokens)
 
-  # Get the formatter results
   [formattedEl, rangeData] = formatter.format()
 
-  # Update the DOM
   workspaceEl.innerHTML = ''
   workspaceEl.appendChild(formattedEl)
 
