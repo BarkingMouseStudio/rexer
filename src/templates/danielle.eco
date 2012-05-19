@@ -1,16 +1,17 @@
-<link href='http://fonts.googleapis.com/css?family=Vast+Shadow' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
 <link href="/styles/danielle.css" rel="stylesheet">
 
-<header class="mainheader">
-  <h1>OPEN REGEXer</h1>
+<header id="mainheader">
+  <h1>rexer</h1>
   <p>an <a href="//applio.us">applio.us</a> / <a href="//freeflow.io">freeflow</a> production</p>
-  <p class="share"><a href="#sharelinkgoeshere">share</a></p>
+  <p class="button"><a href="#sharelinkgoeshere">share</a></p>
 </header>
 
-<section class="mainarea group">    
-  <section class='workarea-section'>
+
+<section id="mainarea" class="group">    
+<!--  <section id='workarea-section'>
     <header>
-      <h2>new regEx: -></h2>
+      <h2>regex <span class="small">=></span></h2>
     </header>
       <div id='workarea' class='workarea inner' spellcheck='false' contenteditable>
         <div>
@@ -176,27 +177,25 @@
       </div>
   </section>
   
-  <section class='testarea-section'>
+  <section id='testarea-section'>
     <header>
-      <h2>var testData: -></h2>
+      <h2>test data <span class="small">=></span></h2>
     </header>
-    <div class='testarea' spellcheck='false' contenteditable>
+    <div id='testarea' spellcheck='false' contenteditable>
       <p>Corned beef <span class='match'>andouille</span> capicola, strip steak meatball leberkas turkey shoulder cow venison spare ribs biltong pork chop hamburger. Capicola shoulder chicken frankfurter, short ribs tenderloin short loin tri-tip sirloin ribeye andouille jerky meatball. Spare ribs tail hamburger tri-tip, swine bacon ball tip beef ribs pastrami jowl strip steak sausage venison. Fatback spare ribs frankfurter, short ribs drumstick turkey pork belly. Flank spare ribs brisket tri-tip, short ribs ball tip shoulder frankfurter swine fatback boudin tongue beef ribs. Corned beef swine prosciutto pig meatball short loin, chicken ham hock strip steak spare ribs bacon kielbasa jerky. Capicola sirloin t-bone jowl shankle beef.</p>
     </div>
   </section>
+-->
 </section>
 
-<!--
-<footer>
-  <nav>
-    <ul class="github">
-      <li>github:</li>
-      <li><a href="https://github.com/applious" target="_blank" class="red">applio.us</a></li>
-      <li><a href="https://github.com/FreeFlow" target="_blank" class="red">freeflow</a></li>
-    </ul>
-  </nav>
+
+<footer id="mainfooter">
+  <menu>
+    <li>github:</li>
+    <li><a href="https://github.com/applious" target="_blank" class="red">applio.us</a></li>
+    <li><a href="https://github.com/FreeFlow" target="_blank" class="red">freeflow</a></li>
+  </menu>
   <address>
-    <a href="mailto:thosepeopleareus@applio.us">thosepeopleareus@applio.us</a>
+    <a href="mailto:thosepeopleare@applio.us">thosepeopleareus@applio.us</a>
   </address>
 </footer>
--->
