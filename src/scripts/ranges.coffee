@@ -19,9 +19,22 @@ F.Ranges = Ranges =
     for rangeEl in el.querySelectorAll(".#{Ranges.boundaryClassName}")
       rangeEl.parentNode.removeChild(rangeEl)
 
+  insertStringAt: (str) ->
+    selection = window.getSelection()
+    unless selection.rangeCount
+      return
+    range = window.getSelection().getRangeAt(0).cloneRange()
+
+    rangeStartText = document.createTextNode(str)
+    rangeStartEl = document.createElement 'span'
+    rangeStartEl.className = 'suggestion'
+    rangeStartEl.appendChild(rangeStartText)
+    range.insertNode(rangeStartEl)
+
   insertBoundaries: ->
     selection = window.getSelection()
-    return unless selection.rangeCount
+    unless selection.rangeCount
+      return
     range = window.getSelection().getRangeAt(0).cloneRange()
 
     rangeStartText = document.createTextNode(Ranges.hiddenCharacter)

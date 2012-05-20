@@ -7,14 +7,13 @@
   <a class="button" href="#sharelinkgoeshere">share</a>
 </header>
 
-<section id="maincontent">    
-  <section id="mainarea">    
+  <section id="mainarea" class="group">    
     <section id='workarea-section'>
       <header>
         <h2>regex <span class="small">=></span></h2>
       </header>
+        <aside id="workarea-line-numbers"></aside>
         <div id='workarea' class='workarea inner' spellcheck='false' contenteditable>
-  
           <div>
             <span class="token special_char">\b</span>
             <div class="group_wrapper">
@@ -177,24 +176,18 @@
             </div>
         </div>
     </section>
-    
     <section id='testarea-section'>
       <header>
         <h2>test data <span class="small">=></span></h2>
       </header>
+      <aside id="testarea-line-numbers"></aside>
       <div id='testarea' spellcheck='false' contenteditable>
         <p>Corned beef <span class='match'>andouille</span> capicola, strip steak meatball leberkas turkey shoulder cow venison spare ribs biltong pork chop hamburger. Capicola shoulder chicken frankfurter, short ribs tenderloin short loin tri-tip sirloin ribeye andouille jerky meatball. Spare ribs tail hamburger tri-tip, swine bacon ball tip beef ribs pastrami jowl strip steak sausage venison. Fatback spare ribs frankfurter, short ribs drumstick turkey pork belly. Flank spare ribs brisket tri-tip, short ribs ball tip shoulder frankfurter swine fatback boudin tongue beef ribs. Corned beef swine prosciutto pig meatball short loin, chicken ham hock strip steak spare ribs bacon kielbasa jerky. Capicola sirloin t-bone jowl shankle beef.</p>
       </div>
     </section>
-  
+    
   </section>
   
-  <aside>
-    <div id="workarea-line-numbers"></div>
-    <div id="testarea-line-numbers"></div>
-  </aside>
-  
-</section>
 
 
 <footer id="mainfooter">

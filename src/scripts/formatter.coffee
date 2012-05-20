@@ -11,16 +11,17 @@ F.Formatter = class Formatter
 
   appendText: (value, tag = '') ->
     textNode = document.createTextNode(value)
-    @lastEl = textEl = document.createElement 'span'
+    textEl = document.createElement 'span'
     textEl.className = "token #{tag?.toLowerCase()}"
     textEl.appendChild(textNode)
     @currentParentEl.appendChild(textEl)
+    return textEl
 
   format: ->
     rangeData = {}
 
     while token = @tokens.shift()
-      [tag, value, index] = token 
+      [tag, value, indices] = token 
       switch tag
         when 'GROUP_START'
           newParentEl = document.createElement 'div'
@@ -30,7 +31,7 @@ F.Formatter = class Formatter
           @currentParentEl = newParentEl
 
           @indentText()
-          @appendText(value, tag) # append `(`
+          contentEl = @appendText(value, tag) # append `(`
 
           newParentEl = document.createElement 'div'
           newParentEl.className = 'group_content'
@@ -46,7 +47,7 @@ F.Formatter = class Formatter
 
           @indent--
           @indentText()
-          @appendText(value, tag) # append `)`
+          contentEl = @appendText(value, tag) # append `)`
 
           @currentParentEl = @previousParentEls.pop()
           if @tokens[0]?[0] not in ['GROUP_END', 'OR']
@@ -58,16 +59,17 @@ F.Formatter = class Formatter
           @previousParentEls.push(@currentParentEl)
           @currentParentEl = newParentEl
           @indentText()
-          @appendText(value, tag) # append `|`
+          contentEl = @appendText(value, tag) # append `|`
           @currentParentEl = @previousParentEls.pop()
           if @tokens[0]?[0] not in ['GROUP_START', 'OR']
             @indentText()
-        else @appendText(value, tag)
+        else contentEl = @appendText(value, tag)
 
-      if index isnt -1
-        rangeData.startNode = @lastEl.childNodes[0]
-        rangeData.startOffset = index
-        rangeData.endNode = @lastEl.childNodes[0]
-        rangeData.endOffset = index
+      for startOffset, i in indices
+        endOffset = indices[++i]
+        rangeData.startNode = contentEl.childNodes[0]
+        rangeData.startOffset = startOffset
+        rangeData.endNode = contentEl.childNodes[0]
+        rangeData.endOffset = endOffset
 
     return [@formattedEl, rangeData]

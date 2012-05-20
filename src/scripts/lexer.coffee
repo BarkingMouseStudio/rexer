@@ -57,12 +57,12 @@ F.Lexer = class Lexer
 
   # Main function of the `Lexer` which returns a `Array` of tokens
   @tokenize: (chunk) ->
-    startOffset = 0
-    endOffset = -1
+    startOffset = oldStartOffset = endOffset = 0
     tokens = []
 
     # Selection boundary indices
     selectionIndices = Lexer.getIndices(chunk, '\ufeff')
+    accountedIndices = 0
 
     # Remove selection boundaries
     chunk = chunk.replace(/\ufeff+/g, '')
@@ -81,27 +81,27 @@ F.Lexer = class Lexer
           continue
 
         [matchedText] = match
-
         endOffset = startOffset + matchedText.length
 
-        tokenSelectionIndices = []
-        
-        while true
-          index = selectionIndices[0]
-          console.log startOffset, endOffset, index - startOffset
-          if startOffset <= index < endOffset
-            tokenSelectionIndices.push(index - startOffset)
-            selectionIndices.shift()
-          else break
-
-        if tokenSelectionIndices.length
-          console.log(tokenSelectionIndices)
-
         chunk = chunk[matchedText.length..]
+        oldStartOffset = startOffset
         startOffset = endOffset
 
         if tokenKind is 'WHITESPACE'
           continue
+
+        tokenSelectionIndices = []
+        
+        while selectionIndices.length
+          index = selectionIndices[0] - accountedIndices
+          if (oldStartOffset <= index <= endOffset) or (index is endOffset and index is length)
+            tokenSelectionIndices.push(index - oldStartOffset)
+            accountedIndices++
+            selectionIndices.shift()
+          else break
+
+        if tokenSelectionIndices.length
+          console.log tokenKind, matchedText, 'start', oldStartOffset, 'end', endOffset, 'indices', selectionIndices.length, selectionIndices, tokenSelectionIndices
 
         tokens.push [tokenKind, matchedText, tokenSelectionIndices]
         break

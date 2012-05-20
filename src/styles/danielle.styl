@@ -10,7 +10,7 @@ body
     background #645752
     color #EFF2F2
     line-height 36px
-    padding 0 2%
+    padding 0 2.5%
     
     h1 
       background url('/images/rexer-logo.png') left center no-repeat
@@ -45,48 +45,49 @@ body
     p
       display inline-block
       color #cccbca
-      
-  #maincontent
+            
   #mainarea 
+    position relative
     background #EFF2F2
     color #645752
-    padding 12px 2%
-    -webkit-column-count  2
-    -moz-column-count  2
-    column-count  2
-    -webkit-column-gap  2%
-    -moz-column-gap  2%
-    column-gap  2%
     
-    &:column
-      background red
-    
-
     section
-      -webkit-column-break-after always
-      -moz-column-break-after always
-      column-break-after always
-      
+      position relative
+      width 47%
+      min-height 600px      
       
       &#workarea-section
-        border-left 26px solid #CA5554
-        border-top 1px solid #CA5554
+        margin 12px 0 12px 2%
+        float left
         header
+        aside
           background #CA5554
   
       &#testarea-section
-        border-left 26px solid #BFB1A1
-        border-top 1px solid #BFB1A1
+        margin 12px 2% 12px 0
+        float right
         header
+        aside
           background #BFB1A1
   
+      & > aside
+        width 24px
+        position absolute
+        top 0
+        bottom 0
+        left 0
+        z-index 0
+      
 
       & > div
-        padding 12px
+        padding 12px 
+        padding-left 36px
 
       header
         color #EFF2F2
-        padding 6px 0px
+        padding 6px 24px
+        position relative
+        z-index 1
         
 
       h2
@@ -94,14 +95,14 @@ body
         font-size 14px
         margin 0
         padding 0
-     
+       
 
 
   #mainfooter
     background #645752
     color #cccbca
     line-height 36px
-    padding 0 2%
+    padding 0 2.5%
     
     a 
       color #EFF2F2

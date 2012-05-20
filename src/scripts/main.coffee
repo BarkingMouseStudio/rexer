@@ -41,6 +41,16 @@ testEl.addEventListener 'keyup', (e) ->
   testMatch(workspaceEl.innerText)
 
 workspaceEl.addEventListener 'keyup', (e) ->
+  ###
+  switch e.keyCode
+    when 219 # [
+      F.Ranges.insertStringAt(']')
+    when 57
+      F.Ranges.insertStringAt(')') if e.shiftKey
+    else
+      console.info e.keyCode
+      ###
+
   F.Ranges.insertBoundaries()
 
   testMatch(workspaceEl.innerText)
