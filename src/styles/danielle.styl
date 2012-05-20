@@ -13,7 +13,7 @@ body
     padding 0 2%
     
     h1 
-      background url('/images/rexer-logo.png') left center no-repeat;
+      background url('/images/rexer-logo.png') left center no-repeat
       text-indent 48px
       margin 0
       margin-right 8px
@@ -28,22 +28,74 @@ body
       
       &:hover 
         color #fff
-    p
-      display inline-block
-      color #cccbca
       
       &.button
+        color #EFF2F2
+        text-decoration none
         display block
         float right
         background #CA5554
         border-radius 2px
         padding 0 18px
+        margin-top 14px        
+        &:hover 
+          color #fff
+          background #f36867
 
+    p
+      display inline-block
+      color #cccbca
+      
+  #maincontent
   #mainarea 
-    min-height 500px
     background #EFF2F2
     color #645752
+    padding 12px 2%
+    -webkit-column-count  2
+    -moz-column-count  2
+    column-count  2
+    -webkit-column-gap  2%
+    -moz-column-gap  2%
+    column-gap  2%
+    
+    &:column
+      background red
+    
+
+    section
+      -webkit-column-break-after always
+      -moz-column-break-after always
+      column-break-after always
+      
+      
+      &#workarea-section
+        border-left 26px solid #CA5554
+        border-top 1px solid #CA5554
+        header
+          background #CA5554
   
+      &#testarea-section
+        border-left 26px solid #BFB1A1
+        border-top 1px solid #BFB1A1
+        header
+          background #BFB1A1
+  
+
+      & > div
+        padding 12px
+
+      header
+        color #EFF2F2
+        padding 6px 0px
+        
+
+      h2
+        font-weight normal
+        font-size 14px
+        margin 0
+        padding 0
+     
+
 
   #mainfooter
     background #645752

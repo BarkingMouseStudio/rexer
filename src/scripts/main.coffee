@@ -3,44 +3,28 @@ window.F = {}
 workspaceEl = document.getElementById 'workspace'
 testEl = document.getElementById 'testarea'
 
-testMatch = ->
-  regexpStr = workspaceEl.innerText
+testMatch = (regExpStr) ->
+  # Break apart the regExpStr into its components
+  unless match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
+    return
 
-  # Break apart the regexpStr into its components
-  match = regexpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
+  [regExpStr, body, flags] = match
 
-  return unless match
-
-  [regexpStr, body, flags] = match
-  testMatch(body, flags)
-
-  # Remove decorators from body
-  strippedBody = body.replace(/[\ufeff\u200b]+/g, '')
+  body = body
+    .replace(/[\ufeff\u200b]+/g, '') # Remove decorators from body
     .replace(/\//g, '\\/')
     .replace(/([^\\])\s/g, ($0, $1) -> $1)
 
   try
-    regexp = new RegExp(strippedBody, flags)
+    regExp = new RegExp(body, flags)
 
     # Display RegExp matches in the test area
-    testEl.innerHTML = testEl.innerText.replace(regexp, '<span class="match">$&</span>')
+    testEl.innerHTML = testEl.innerText.replace(regExp, '<span class="match">$&</span>')
   catch err
     console.error err.message
 
-  return body
-
-testEl.addEventListener 'keyup', (e) ->
-  testMatch()
-
-workspaceEl.addEventListener 'keyup', (e) ->
-  # Clean any existing selection boundary placeholders
-  # and add new selection boundary placeholders.
-  F.Ranges.clearBoundaries(workspaceEl)
-  F.Ranges.insertBoundaries()
-
-  body = testMatch()
-
-  tokens = F.Lexer.tokenize(body)
+formatRegExp = (regExpStr) ->
+  tokens = F.Lexer.tokenize(regExpStr)
   formatter = new F.Formatter(tokens)
 
   [formattedEl, rangeData] = formatter.format()
@@ -52,3 +36,12 @@ workspaceEl.addEventListener 'keyup', (e) ->
   F.Ranges.clearRanges()
   range = F.Ranges.createRange(rangeData.startNode, rangeData.startOffset, rangeData.endNode, rangeData.endOffset)
   F.Ranges.addRange(range)
+
+testEl.addEventListener 'keyup', (e) ->
+  testMatch(workspaceEl.innerText)
+
+workspaceEl.addEventListener 'keyup', (e) ->
+  F.Ranges.insertBoundaries()
+
+  testMatch(workspaceEl.innerText)
+  formatRegExp(workspaceEl.innerText)

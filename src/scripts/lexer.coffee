@@ -2,6 +2,9 @@ F.Lexer = class Lexer
 
   # Token-matching RegExps
   @tokenRegex:
+    PROLOGUE: /^\/{3}/
+    EPILOGUE: /^\/{3}([imgy]{0,4})$/
+
     SPECIAL_CHAR: /^\\[wWdDsSbB]/
     WHITESPACE_CHAR: /^\\[tnr]/
     ESCAPED_CHAR: /^\\./
@@ -34,67 +37,73 @@ F.Lexer = class Lexer
     'RANGE'
     'CHAR_GROUP'
     'COMMENT'
+    'PROLOGUE'
+    'EPILOGUE'
     'OTHER'
   ]
 
-  @unicode200B: /\u200b+/ # zero-width space
-  @unicodeFEFF: /\ufeff+/ # non-breaking zero-width space
+  @unicode200B: '\u200b' # zero-width space
+  @unicodeFEFF: '\ufeff' # non-breaking zero-width space
+
+  @getIndices: (haystack, needle) ->
+    indices = []
+    index = -1
+    while true
+      index = haystack.indexOf(needle, index)
+      break if index is -1
+      indices.push(index)
+      index += needle.length
+    return indices
 
   # Main function of the `Lexer` which returns a `Array` of tokens
   @tokenize: (chunk) ->
-    # Original length of the string (minus selection boundaries)
-    length = chunk.length - 2
-
-    # Starting offset within the RegExp-string for the current chunk
     startOffset = 0
-
-    # `Array` of collected tokens
+    endOffset = -1
     tokens = []
 
-    # Next selection boundary index
-    nextSelectionIndex = null
+    # Selection boundary indices
+    selectionIndices = Lexer.getIndices(chunk, '\ufeff')
+
+    # Remove selection boundaries
+    chunk = chunk.replace(/\ufeff+/g, '')
+    length = chunk.length
 
     # Iterate of the remaining regexp string until its all gone
     while chunk
 
-      # Get the next selection index in the chunk
-      if nextSelectionIndex isnt -1
-        chunk = chunk.replace Lexer.unicodeFEFF, (match, parts..., offset, str) ->
-          nextSelectionIndex = offset
-          ''
-
-      # For each token-kind...
       for tokenKind in Lexer.tokenPriority
 
-        # ...try matching the RegExp-string (from the beginning of the string)
         unless match = Lexer.tokenRegex[tokenKind].exec chunk
-          # Move on to the next token
           continue
 
-        # Break out the matched text from the regex
+        # Prologue only valid at 0
+        if tokenKind is 'PROLOGUE' and startOffset isnt 0
+          continue
+
         [matchedText] = match
 
-        # Get the end offset of the match
         endOffset = startOffset + matchedText.length
-        tokenSelectionIndex = -1
-        tokenStart = false
-        tokenEnd = false
 
-        # If the selection boundary is within the match keep the offset within
-        if (startOffset <= nextSelectionIndex < endOffset) or (nextSelectionIndex is endOffset and nextSelectionIndex is length)
-          tokenSelectionIndex = nextSelectionIndex - startOffset
+        tokenSelectionIndices = []
+        
+        while true
+          index = selectionIndices[0]
+          console.log startOffset, endOffset, index - startOffset
+          if startOffset <= index < endOffset
+            tokenSelectionIndices.push(index - startOffset)
+            selectionIndices.shift()
+          else break
 
-        # Advance the start offset for the next match
+        if tokenSelectionIndices.length
+          console.log(tokenSelectionIndices)
+
+        chunk = chunk[matchedText.length..]
         startOffset = endOffset
 
-        # Move the regexp string forward
-        chunk = chunk[matchedText.length..]
+        if tokenKind is 'WHITESPACE'
+          continue
 
-        # Add the new token to the token stream
-        tokens.push [tokenKind, matchedText, tokenSelectionIndex]
-
-        # Stop searching
+        tokens.push [tokenKind, matchedText, tokenSelectionIndices]
         break
 
-    # Return the tokens
     return tokens

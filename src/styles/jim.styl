@@ -50,14 +50,23 @@ body
   span.suggestion
     color #ccc
 
-  div
+  div, ol
     margin 0
-    padding 2px
-    border-radius 4px
+    padding 0
     white-space pre
 
-    span.comment
+  .token
+    &.comment
       color #ccc
 
       &.warn
         color #884
+
+    &.group_start, &.group_end
+      opacity 0.9
+
+    &.char_group
+      color #66a
+
+    &.quantifier
+      color #484

@@ -1,7 +1,7 @@
 F.Formatter = class Formatter
   constructor: (tokens) ->
     @tokens = tokens.slice 0
-    @currentParentEl = @formattedEl = document.createElement 'div'
+    @currentParentEl = @formattedEl = document.createElement 'ol'
     @previousParentEls = []
     @indent = 0
 
@@ -39,7 +39,8 @@ F.Formatter = class Formatter
           @currentParentEl = newParentEl
 
           @indent++
-          @indentText()
+          if @tokens[0]?[0] not in ['GROUP_START', 'OR']
+            @indentText()
         when 'GROUP_END'
           @currentParentEl = @previousParentEls.pop()
 
@@ -48,6 +49,8 @@ F.Formatter = class Formatter
           @appendText(value, tag) # append `)`
 
           @currentParentEl = @previousParentEls.pop()
+          if @tokens[0]?[0] not in ['GROUP_END', 'OR']
+            @indentText()
         when 'OR'
           newParentEl = document.createElement 'div'
           newParentEl.className = 'or'
@@ -57,7 +60,8 @@ F.Formatter = class Formatter
           @indentText()
           @appendText(value, tag) # append `|`
           @currentParentEl = @previousParentEls.pop()
-          @indentText()
+          if @tokens[0]?[0] not in ['GROUP_START', 'OR']
+            @indentText()
         else @appendText(value, tag)
 
       if index isnt -1
