@@ -1,5 +1,5 @@
 F.Ranges = Ranges =
-  hiddenCharacter: '\ufeff'
+  hiddenCharacter: '√'
   boundaryClassName: 'selection_boundary'
 
   createRange: (startNode, startOffset, endNode, endOffset) ->

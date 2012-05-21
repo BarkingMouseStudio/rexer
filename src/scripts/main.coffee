@@ -16,7 +16,7 @@ testMatch = (regExpStr) ->
   [regExpStr, body, flags] = match
 
   body = body
-    .replace(/[\ufeff∆]+/g, '') # Remove decorators from body
+    .replace(/[√∆]+/g, '') # Remove decorators from body
     .replace(/\//g, '\\/') #'# excape forward slashes
     .replace(/([^\\])\s/g, ($0, $1) -> $1) # removes unescapde whitespace
 
@@ -34,10 +34,9 @@ testEl.addEventListener 'keyup', (e) ->
 formatRegExp = (regExpStr) ->
   regExpStr = regExpStr
     .replace(/∆+/g, '') # Remove decorators from body
-    .replace(/[ \t]+/g, '')
-    .replace(/\ufeff[\r\n]/g, '\ufeff∆')
-    .replace(/[\r\n]\ufeff/g, '∆\ufeff')
-    .replace(/[\r\n]+/g, '')
+    .replace(/√[\r\n]/g, '√∆')
+    .replace(/[\r\n]√/g, '∆√')
+    .replace(/[ \t\r\n]+/g, '')
 
   tokens = F.Lexer.tokenize(regExpStr)
   formatter = new F.Formatter(tokens)

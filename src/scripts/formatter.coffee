@@ -50,7 +50,7 @@ F.Formatter = class Formatter
           contentEl = @appendText(value, tag) # append `)`
 
           @currentParentEl = @previousParentEls.pop()
-          if @tokens[0]?[0] not in ['GROUP_END', 'OR']
+          if @tokens[0]?[0] not in ['GROUP_START', 'GROUP_END', 'OR']
             @indentText()
         when 'OR'
           newParentEl = document.createElement 'div'

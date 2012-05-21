@@ -54,24 +54,21 @@ F.Lexer = class Lexer
 
   # Main function of the `Lexer` which returns a `Array` of tokens
   @tokenize: (chunk) ->
+    console.log chunk
     startOffset = oldStartOffset = endOffset = 0
     tokens = []
 
     # Selection boundary indices
-    selectionIndices = Lexer.getIndices(chunk, '\ufeff')
+    selectionIndices = Lexer.getIndices(chunk, '√')
     accountedIndices = 0
 
-    # console.log selectionIndices.slice()
-
     # Remove selection boundaries
-    chunk = chunk.replace(/\ufeff+/g, '')
+    chunk = chunk.replace(/√+/g, '')
     length = chunk.length
 
     # Iterate of the remaining regexp string until its all gone
     `chunking://`
     while chunk
-
-      console.log chunk
 
       for tokenKind in Lexer.tokenPriority
         unless match = Lexer.tokenRegex[tokenKind].exec chunk
