@@ -31,6 +31,8 @@ testMatch = (regExpStr) ->
 testEl.addEventListener 'keyup', (e) ->
   testMatch(workspaceEl.innerText)
 
+# TODO: single-line regex
+# TODO: interactive tutorial
 formatRegExp = (regExpStr) ->
   regExpStr = regExpStr
     .replace(/∆+/g, '') # Remove decorators from body
@@ -52,6 +54,11 @@ formatRegExp = (regExpStr) ->
   F.Ranges.addRange(range)
 
 workspaceEl.addEventListener 'keyup', (e) ->
+  if e.keyCode in [
+    91 # ⌘
+  ]
+    return
+
   F.Ranges.insertBoundaries()
 
   testMatch(workspaceEl.innerText)

@@ -54,7 +54,6 @@ F.Lexer = class Lexer
 
   # Main function of the `Lexer` which returns a `Array` of tokens
   @tokenize: (chunk) ->
-    console.log chunk
     startOffset = oldStartOffset = endOffset = 0
     tokens = []
 
