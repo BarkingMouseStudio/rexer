@@ -18,14 +18,15 @@ F.Lexer = class Lexer
     RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
     CHAR_GROUP: /^(\[\^?)((?:(?:[^\\]\\\])|.)+?)\]/
     OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\s*]+/
+    LINEBOUNDARY: /^∆/
     WHITESPACE: /^\s+/
-    COMMENT: /^\ \#\ (.*)\s*$/m
 
   # Controls the tokenization priority
   @tokenPriority: [
     'SPECIAL_CHAR'
     'WHITESPACE_CHAR'
     'ESCAPED_CHAR'
+    'LINEBOUNDARY'
     'WHITESPACE'
     'INPUT_START'
     'ESCAPED_DOLLAR'
@@ -36,14 +37,10 @@ F.Lexer = class Lexer
     'OR'
     'RANGE'
     'CHAR_GROUP'
-    'COMMENT'
     'PROLOGUE'
     'EPILOGUE'
     'OTHER'
   ]
-
-  @unicode200B: '\u200b' # zero-width space
-  @unicodeFEFF: '\ufeff' # non-breaking zero-width space
 
   @getIndices: (haystack, needle) ->
     indices = []
@@ -64,15 +61,19 @@ F.Lexer = class Lexer
     selectionIndices = Lexer.getIndices(chunk, '\ufeff')
     accountedIndices = 0
 
+    # console.log selectionIndices.slice()
+
     # Remove selection boundaries
     chunk = chunk.replace(/\ufeff+/g, '')
     length = chunk.length
 
     # Iterate of the remaining regexp string until its all gone
+    `chunking://`
     while chunk
 
-      for tokenKind in Lexer.tokenPriority
+      console.log chunk
 
+      for tokenKind in Lexer.tokenPriority
         unless match = Lexer.tokenRegex[tokenKind].exec chunk
           continue
 
@@ -88,7 +89,10 @@ F.Lexer = class Lexer
         startOffset = endOffset
 
         if tokenKind is 'WHITESPACE'
-          continue
+          `continue chunking`
+
+        if tokenKind is 'LINEBOUNDARY'
+          `continue chunking`
 
         tokenSelectionIndices = []
         
@@ -100,10 +104,14 @@ F.Lexer = class Lexer
             selectionIndices.shift()
           else break
 
-        if tokenSelectionIndices.length
-          console.log tokenKind, matchedText, 'start', oldStartOffset, 'end', endOffset, 'indices', selectionIndices.length, selectionIndices, tokenSelectionIndices
-
+        matchedText = matchedText.replace(/∆/g, '')
         tokens.push [tokenKind, matchedText, tokenSelectionIndices]
-        break
+        `continue chunking`
+
+      console.log 'Fucked up character chausing an infinite loop...',
+        'previous', tokens[tokens.length - 1],
+        'last', chunk[0],
+        'chunk', chunk
+      chunk = chunk[1..]
 
     return tokens
