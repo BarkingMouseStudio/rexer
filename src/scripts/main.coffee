@@ -1,38 +1,46 @@
-window.F = {}
+# TODO: single-line regex
+# TODO: fix DOM Error 1 (random)
+# TODO: fix DOM Error 8 (entering whitespace via backspace)
+# FEATURE: put quantifiers on group_end line
+# FEATURE: line numbers
+# FEATURE: inline comments (Danielle is writing copy)
+# FEATURE: sharing
+# FEATURE: highlighting current
+# FEATURE: interactive tutorial
 
-# DEFAULTS
-workspaceEl = document.getElementById 'workspace'
+window.F or= {}
+
+workareaEl = document.getElementById 'workarea'
 testEl = document.getElementById 'testarea'
 
-# HELPER FUNCTIONS
-# checks to see if it's a valid regex
-# returns if not
-# breaks apart 
 testMatch = (regExpStr) ->
   # Break apart the regExpStr into its components
-  unless match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
+  regExpStr = regExpStr
+    .replace(/[√∆]+/g, '') # Remove decorators from body
+  match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
+  unless match
     return
 
   [regExpStr, body, flags] = match
 
   body = body
     .replace(/[√∆]+/g, '') # Remove decorators from body
-    .replace(/\//g, '\\/') #'# excape forward slashes
     .replace(/([^\\])\s/g, ($0, $1) -> $1) # removes unescapde whitespace
 
   try
     regExp = new RegExp(body, flags)
 
     # Display RegExp matches in the test area
-    testEl.innerHTML = testEl.innerText.replace(regExp, '<span class="match">$&</span>')
+    testEl.innerHTML = '<div>' + 
+      testEl.innerText
+        .replace(regExp, '<span class="match">$&</span>')
+        .replace(/\n/g, '</div><div>') + '</div>'
   catch err
     console.error err.message
 
 testEl.addEventListener 'keyup', (e) ->
-  testMatch(workspaceEl.innerText)
+  testMatch(workareaEl.innerText)
 
-# TODO: single-line regex
-# TODO: interactive tutorial
 formatRegExp = (regExpStr) ->
   regExpStr = regExpStr
     .replace(/∆+/g, '') # Remove decorators from body
@@ -45,21 +53,25 @@ formatRegExp = (regExpStr) ->
 
   [formattedEl, rangeData] = formatter.format()
 
-  workspaceEl.innerHTML = ''
-  workspaceEl.appendChild(formattedEl)
+  workareaEl.innerHTML = ''
+  workareaEl.appendChild(formattedEl)
 
   # Reset the selection ranges
   F.Ranges.clearRanges()
   range = F.Ranges.createRange(rangeData.startNode, rangeData.startOffset, rangeData.endNode, rangeData.endOffset)
   F.Ranges.addRange(range)
 
-workspaceEl.addEventListener 'keyup', (e) ->
+testMatch(workareaEl.innerText)
+formatRegExp(workareaEl.innerText)
+
+workareaEl.addEventListener 'keyup', (e) ->
   if e.keyCode in [
     91 # ⌘
   ]
     return
 
+  F.Ranges.clearBoundaries(workareaEl)
   F.Ranges.insertBoundaries()
 
-  testMatch(workspaceEl.innerText)
-  formatRegExp(workspaceEl.innerText)
+  testMatch(workareaEl.innerText)
+  formatRegExp(workareaEl.innerText)

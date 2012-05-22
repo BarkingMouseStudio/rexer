@@ -1,7 +1,9 @@
+window.F or= {}
+
 F.Formatter = class Formatter
   constructor: (tokens) ->
     @tokens = tokens.slice 0
-    @currentParentEl = @formattedEl = document.createElement 'ol'
+    @currentParentEl = @formattedEl = document.createElement 'div'
     @previousParentEls = []
     @indent = 0
 

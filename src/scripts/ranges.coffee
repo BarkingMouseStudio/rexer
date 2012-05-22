@@ -1,11 +1,16 @@
+window.F or= {}
+
 F.Ranges = Ranges =
   hiddenCharacter: '√'
   boundaryClassName: 'selection_boundary'
 
   createRange: (startNode, startOffset, endNode, endOffset) ->
-    range = document.createRange()
-    range.setStart(startNode, startOffset)
-    range.setEnd(endNode, endOffset)
+    try
+      range = document.createRange()
+      range.setStart(startNode, startOffset)
+      range.setEnd(endNode, endOffset)
+    catch err
+      console.error err
     return range
 
   clearRanges: (selection = window.getSelection()) ->

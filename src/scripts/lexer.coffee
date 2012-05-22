@@ -1,3 +1,5 @@
+window.F or= {}
+
 F.Lexer = class Lexer
 
   # Token-matching RegExps

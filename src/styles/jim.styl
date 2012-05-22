@@ -1,54 +1,120 @@
+$header-background-color = #645752
+$header-text-color = #cccbca
+$header-link-color = #eff2f2
+$left-background-color = #ca5554
+$right-background-color = #bfb1a1
+$text-color = black
+$background-color = #f8f8f8
+$match-background = #ffc
+$match-border = #cc2
+$warn-color = #884
+$comment-color = #ccc
+$char-group-color = #44a
+$escaped-char-color = #c44
+$quantifier-color = #4a4
+$group-color = rgba(0, 0, 0, 0.4)
+$or-color = $group-color
+
 body
-  margin 0
   box-sizing border-box
-  font-size 12px
-  font-family 'PT Mono', monospace
-  color #888
-  background #f8f8f8 // url(/images/background-light.png)
+  margin 0
+  padding 0
+  background $background-color
+  font-family 'Helvetica Neue', Arial, sans-serif
+  font-size 14px
+  color $text-color
+
+.main-header
+.main-footer
+  background $header-background-color
+  color $header-text-color
   padding 20px
+  overflow hidden
 
-.outer
-  background rgba(0, 0, 0, 0.1)
-  padding 4px
-  margin 0 20px 40px
-  border-radius 4px
+  h1
+    background url('/images/rexer-logo.png') left center no-repeat
+    text-transform lowercase
+    font-weight 200
+    margin 0
+    padding 0 0 0 45px
 
-  .inner
-    padding 20px
-    border 1px solid rgba(0, 0, 0, 0.2)
-    cursor text
-    background #f8f8f8
+  p
+    text-transform lowercase
+    margin 10px 0 0
 
-    &:focus
-      outline none
+  a
+    color $header-link-color
+    text-decoration none
+
+    &:hover
+      text-decoration underline
+
+  menu
+  address
+    width 50%
+    float left
+  menu
+    margin 0
+    padding 0
+    overflow hidden
+    list-style none
+    li
+      margin 0 4px 0 0
+      float left
+  address
+    text-align right
+    font-style normal
 
 .columns
   overflow hidden
+  background $right-background-color
 
   > .left
   > .right
     float left
     width 50%
 
+    header
+      color white
+      padding 20px 40px
+
+      h3
+        font-weight 200
+        margin 0
+
+  > .left
+    background $left-background-color
+
+.outer
+  border-top-left-radius 4px
+  padding 0 0 0 40px
+
+  .inner
+    padding 20px
+    cursor text
+    background white
+    color $text-color
+    line-height 18px
+    font-size 12px
+    font-family 'PT Mono', monospace
+
+    &:focus
+      outline none
+
 .testarea
-  line-height 18px
 
   .match
-    border 1px solid #cc2
-    background #ffc
+    border 1px solid $match-border
+    background $match-background
     border-radius 2px
 
-  > p
+  div
     margin 0 0 10px
 
-    &:last-child
-      margin 0
-
-.workspace
-  line-height 18px
+.workarea
 
   span.suggestion
-    color #ccc
+    color $comment-color
 
   div, ol
     margin 0
@@ -57,16 +123,25 @@ body
 
   .token
     &.comment
-      color #ccc
+      color $comment-color
 
       &.warn
-        color #884
+        color $warn-color
 
-    &.group_start, &.group_end
-      opacity 0.9
+    &.group_start
+    &.group_end
+      color $group-color
+
+    &.escaped_char
+    &.special_char
+    &.whitespace_char
+      color $escaped-char-color
+
+    &.or
+      color $or-color
 
     &.char_group
-      color #66a
+      color $char-group-color
 
     &.quantifier
-      color #484
+      color $quantifier-color
