@@ -1,4 +1,4 @@
 node_modules/
-public/scripts/*.js
-public/styles/*.css
-public/scripts/deps/node_modules/
+assets/
+public/scripts/
+public/styles/
