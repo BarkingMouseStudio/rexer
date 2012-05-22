@@ -1,6 +1,4 @@
-window.F or= {}
-
-F.Formatter = class Formatter
+class Formatter
   constructor: (tokens) ->
     @tokens = tokens.slice 0
     @currentParentEl = @formattedEl = document.createElement 'div'
@@ -76,13 +74,11 @@ F.Formatter = class Formatter
 
     return [@formattedEl, rangeData]
 
-F.Lexer = class Lexer
-
+Lexer =
   # Token-matching RegExps
-  @tokenRegex:
+  tokenRegex:
     PROLOGUE: /^\/{3}/
     EPILOGUE: /^\/{3}([imgy]{0,4})$/
-
     SPECIAL_CHAR: /^\\[wWdDsSbB]/
     WHITESPACE_CHAR: /^\\[tnr]/
     ESCAPED_CHAR: /^\\./
@@ -100,7 +96,7 @@ F.Lexer = class Lexer
     WHITESPACE: /^\s+/
 
   # Controls the tokenization priority
-  @tokenPriority: [
+  tokenPriority: [
     'SPECIAL_CHAR'
     'WHITESPACE_CHAR'
     'ESCAPED_CHAR'
@@ -120,7 +116,7 @@ F.Lexer = class Lexer
     'OTHER'
   ]
 
-  @getIndices: (haystack, needle) ->
+  getIndices: (haystack, needle) ->
     indices = []
     index = -1
     while true
@@ -131,7 +127,7 @@ F.Lexer = class Lexer
     return indices
 
   # Main function of the `Lexer` which returns a `Array` of tokens
-  @tokenize: (chunk) ->
+  tokenize: (chunk) ->
     startOffset = oldStartOffset = endOffset = 0
     tokens = []
 
@@ -169,7 +165,7 @@ F.Lexer = class Lexer
           `continue chunking`
 
         tokenSelectionIndices = []
-        
+
         while selectionIndices.length
           index = selectionIndices[0] - accountedIndices
           if (oldStartOffset <= index <= endOffset) or (index is endOffset and index is length)
@@ -190,7 +186,7 @@ F.Lexer = class Lexer
 
     return tokens
 
-F.Ranges = Ranges =
+Ranges =
   hiddenCharacter: '√'
   boundaryClassName: 'selection_boundary'
 
@@ -286,8 +282,8 @@ formatRegExp = (regExpStr) ->
     .replace(/[\r\n]√/g, '∆√')
     .replace(/[ \t\r\n]+/g, '')
 
-  tokens = F.Lexer.tokenize(regExpStr)
-  formatter = new F.Formatter(tokens)
+  tokens = Lexer.tokenize(regExpStr)
+  formatter = new Formatter(tokens)
 
   [formattedEl, rangeData] = formatter.format()
 
@@ -295,9 +291,9 @@ formatRegExp = (regExpStr) ->
   workareaEl.appendChild(formattedEl)
 
   # Reset the selection ranges
-  F.Ranges.clearRanges()
-  range = F.Ranges.createRange(rangeData.startNode, rangeData.startOffset, rangeData.endNode, rangeData.endOffset)
-  F.Ranges.addRange(range)
+  Ranges.clearRanges()
+  range = Ranges.createRange(rangeData.startNode, rangeData.startOffset, rangeData.endNode, rangeData.endOffset)
+  Ranges.addRange(range)
 
 testMatch(workareaEl.innerText)
 formatRegExp(workareaEl.innerText)
@@ -308,8 +304,8 @@ workareaEl.addEventListener 'keyup', (e) ->
   ]
     return
 
-  F.Ranges.clearBoundaries(workareaEl)
-  F.Ranges.insertBoundaries()
+  Ranges.clearBoundaries(workareaEl)
+  Ranges.insertBoundaries()
 
   testMatch(workareaEl.innerText)
   formatRegExp(workareaEl.innerText)
