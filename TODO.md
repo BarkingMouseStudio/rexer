@@ -1,11 +1,25 @@
 TODO
 ====
 
-* inline comments
+* support single-line regex
+* fix DOM Error 1 (random)
+* fix DOM Error 8 (entering whitespace via backspace)
+
+
+FEATURES
+========
+
+* put quantifiers on group_end line
+* line numbers
+* inline comments (Danielle is writing copy)
+* highlighting current
+* interactive tutorial
+* gist share w/ url shortener
+
+
+NICE-TO-HAVES
+=============
+
 * code-folding
-* share w/ url shortener
-* highlight editing block
-* auto-format
 * auto-correct/escape invalid regexp
-* cannot enter invalid regexp
 * auto-suggestions
