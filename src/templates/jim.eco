@@ -13,7 +13,7 @@
     </header>
     <div class='outer'>
       <aside id='line-numbers'></aside>
-      <div id='workarea' class='workarea inner' spellcheck='false' contenteditable>///\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))///g</div>
+      <div id='workarea' class='workarea inner' spellcheck='false' contenteditable>/\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi</div>
     </div>
   </div>
   <div class='right'>

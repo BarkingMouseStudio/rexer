@@ -1,177 +1,4 @@
-workareaEl = document.getElementById 'workarea'
-testareaEl = document.getElementById 'testarea'
-
-selectionBoundaryChar = '√'
-selectionBoundaryClass = 'selection_boundary'
-
-lineBoundaryChar = '∆'
-
-# Token-matching RegExps
-tokenRegex =
-  PROLOGUE: /^\/{3}/
-  EPILOGUE: /^\/{3}([imgy]{0,4})$/
-  SPECIAL_CHAR: /^\\[wWdDsSbB]/
-  WHITESPACE_CHAR: /^\\[tnr]/
-  ESCAPED_CHAR: /^\\./
-  INPUT_START: /^\^/
-  INPUT_END: /^\$/
-  ESCAPED_DOLLAR: /^\${2}/
-  QUANTIFIER: /^(?:(\?)|([\+\*]\??))/
-  GROUP_START: /^\((\?(?:(?:\:)|(?:\=)|(?:\!)|(?:\<\=)|(?:\<\!))?)?/
-  GROUP_END: /^\)/
-  OR: /^\|/
-  RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
-  CHAR_GROUP: /^(\[\^?)((?:(?:[^\\]\\\])|.)+?)\]/
-  OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\s*]+/
-  LINEBOUNDARY: /^∆/
-  WHITESPACE: /^\s+/
-
-# Controls the tokenization priority
-tokenPriority = [
-  'SPECIAL_CHAR'
-  'WHITESPACE_CHAR'
-  'ESCAPED_CHAR'
-  'LINEBOUNDARY'
-  'WHITESPACE'
-  'INPUT_START'
-  'ESCAPED_DOLLAR'
-  'INPUT_END'
-  'QUANTIFIER'
-  'GROUP_START'
-  'GROUP_END'
-  'OR'
-  'RANGE'
-  'CHAR_GROUP'
-  'PROLOGUE'
-  'EPILOGUE'
-  'OTHER'
-]
-
-# Gets an array of indices for the `needle` in the `haystack`
-getIndices = (haystack, needle) ->
-  indices = []
-  index = -1
-  while true
-    index = haystack.indexOf(needle, index)
-    break if index is -1
-    indices.push(index)
-    index += needle.length
-  return indices
-
-createRange = (startNode, startOffset, endNode, endOffset) ->
-  try
-    range = document.createRange()
-    range.setStart(startNode, startOffset)
-    range.setEnd(endNode, endOffset)
-  catch err
-    console.error err
-  return range
-
-clearRanges = (selection = window.getSelection()) ->
-  selection.removeAllRanges() if selection.rangeCount
-  return selection
-
-addRange = (range, selection = window.getSelection()) ->
-  selection.addRange(range)
-
-clearSelectionBoundaries = (el) ->
-  for rangeEl in el.querySelectorAll(".#{selectionBoundaryClass}")
-    rangeEl.parentNode.removeChild(rangeEl)
-
-insertStringAt = (str) ->
-  selection = window.getSelection()
-  unless selection.rangeCount
-    return
-  range = window.getSelection().getRangeAt(0).cloneRange()
-
-  rangeStartText = document.createTextNode(str)
-  rangeStartEl = document.createElement 'span'
-  rangeStartEl.className = 'suggestion'
-  rangeStartEl.appendChild(rangeStartText)
-  range.insertNode(rangeStartEl)
-
-insertSelectionBoundaries = ->
-  selection = window.getSelection()
-  unless selection.rangeCount
-    return
-  range = window.getSelection().getRangeAt(0).cloneRange()
-
-  rangeStartText = document.createTextNode(selectionBoundaryChar)
-  rangeStartEl = document.createElement 'span'
-  rangeStartEl.className = selectionBoundaryClass
-  rangeStartEl.appendChild(rangeStartText)
-  range.insertNode(rangeStartEl)
-
-  range.collapse(false) # collapse to end
-
-  rangeEndText = document.createTextNode(selectionBoundaryChar)
-  rangeEndEl = document.createElement 'span'
-  rangeEndEl.className = selectionBoundaryClass
-  rangeEndEl.appendChild(rangeEndText)
-  range.insertNode(rangeEndEl)
-
-  range.detach()
-
-# Returns a `Array` of tokens
-tokenize = (chunk) ->
-  startOffset = oldStartOffset = endOffset = 0
-  tokens = []
-
-  # Selection boundary indices
-  selectionIndices = getIndices(chunk, selectionBoundaryChar)
-  accountedIndices = 0
-
-  # Remove selection boundaries
-  chunk = chunk.replace(/√+/g, '')
-  length = chunk.length
-
-  # Iterate of the remaining regexp string until its all gone
-  `chunking://`
-  while chunk
-
-    for tokenKind in tokenPriority
-      unless match = tokenRegex[tokenKind].exec chunk
-        continue
-
-      # Prologue only valid at 0
-      if tokenKind is 'PROLOGUE' and startOffset isnt 0
-        continue
-
-      [matchedText] = match
-      endOffset = startOffset + matchedText.length
-
-      chunk = chunk[matchedText.length..]
-      oldStartOffset = startOffset
-      startOffset = endOffset
-
-      if tokenKind is 'WHITESPACE'
-        `continue chunking`
-
-      if tokenKind is 'LINEBOUNDARY'
-        `continue chunking`
-
-      tokenSelectionIndices = []
-
-      while selectionIndices.length
-        index = selectionIndices[0] - accountedIndices
-        if (oldStartOffset <= index <= endOffset) or (index is endOffset and index is length)
-          tokenSelectionIndices.push(index - oldStartOffset)
-          accountedIndices++
-          selectionIndices.shift()
-        else break
-
-      matchedText = matchedText.replace(/∆/g, '')
-      tokens.push [tokenKind, matchedText, tokenSelectionIndices]
-      `continue chunking`
-
-    console.log 'Fucked up character chausing an infinite loop...',
-      'previous', tokens[tokens.length - 1],
-      'last', chunk[0],
-      'chunk', chunk
-    chunk = chunk[1..]
-
-  return tokens
-
+# Formats a token array into a DOM element.
 class Formatter
   constructor: (tokens) ->
     @tokens = tokens.slice 0
@@ -239,8 +66,8 @@ class Formatter
             @indentText()
         else contentEl = @appendText(value, tag)
 
-      for startOffset, i in indices
-        endOffset = indices[++i]
+      if indices.length
+        [startOffset, endOffset] = indices
         rangeData.startNode = contentEl.childNodes[0]
         rangeData.startOffset = startOffset
         rangeData.endNode = contentEl.childNodes[0]
@@ -248,19 +75,190 @@ class Formatter
 
     return [@formattedEl, rangeData]
 
+
+workareaEl = document.getElementById 'workarea'
+testareaEl = document.getElementById 'testarea'
+
+selectionBoundaryChar = '√'
+selectionBoundaryClass = 'selection_boundary'
+
+lineBoundaryChar = '∆'
+
+# Token-matching RegExps.
+# Each matches from the beginning of the string and
+# some characters that represent a `RegExp` token.
+tokenRegex =
+  PROLOGUE: /^\/{3}/
+  EPILOGUE: /^\/{3}([imgy]{0,4})∆*$/
+  SINGLELINE_PROLOGUE: /^\//
+  SINGLELINE_EPILOGUE: /^\/([imgy]{0,4})∆*$/
+  SPECIAL_CHAR: /^\\[wWdDsSbB]/
+  WHITESPACE_CHAR: /^\\[tnr]/
+  ESCAPED_CHAR: /^\\./
+  INPUT_START: /^\^/
+  INPUT_END: /^\$/
+  ESCAPED_DOLLAR: /^\${2}/
+  QUANTIFIER: /^(?:(\?)|([\+\*]\??))/
+  GROUP_START: /^\((\?(?:(?:\:)|(?:\=)|(?:\!)|(?:\<\=)|(?:\<\!))?)?/
+  GROUP_END: /^\)/
+  OR: /^\|/
+  RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
+  CHAR_GROUP: /^(\[\^?)((?:(?:[^\\]\\\])|.)+?)\]/
+  OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\s*]+/
+  LINEBOUNDARY: /^∆/
+  WHITESPACE: /^\s+/
+
+# Controls the tokenization priority.
+# There's some overlap in the tokens and a prioritization
+# order is needed to disambiguate.
+tokenPriority = [
+  'SPECIAL_CHAR'
+  'WHITESPACE_CHAR'
+  'ESCAPED_CHAR'
+  'LINEBOUNDARY'
+  'WHITESPACE'
+  'INPUT_START'
+  'ESCAPED_DOLLAR'
+  'INPUT_END'
+  'QUANTIFIER'
+  'GROUP_START'
+  'GROUP_END'
+  'OR'
+  'RANGE'
+  'CHAR_GROUP'
+  'PROLOGUE'
+  'EPILOGUE'
+  'SINGLELINE_PROLOGUE'
+  'SINGLELINE_EPILOGUE'
+  'OTHER'
+]
+
+
+# Gets an array of indices for the `needle` in the `haystack`.
+# This is used to find selection boundaries in a
+# RegExp string before tokenization.
+getIndices = (haystack, needle) ->
+  indices = []
+  index = -1
+  while true
+    index = haystack.indexOf(needle, index)
+    break if index is -1
+    indices.push(index)
+    index += needle.length
+  return indices
+
+
+# Insert characters to represent the beginning and end of a selection range.
+insertSelectionBoundaries = ->
+  selection = window.getSelection()
+
+  unless selection.rangeCount
+    return
+
+  range = selection.getRangeAt(0).cloneRange()
+
+  # Create a selection boundary at the beginning of the range.
+  rangeStartText = document.createTextNode(selectionBoundaryChar)
+  rangeStartEl = document.createElement 'span'
+  rangeStartEl.className = selectionBoundaryClass
+  rangeStartEl.appendChild(rangeStartText)
+  range.insertNode(rangeStartEl)
+
+  # Collapse to end and create a selection boundary at the end of the range.
+  range.collapse(false)
+
+  rangeEndText = document.createTextNode(selectionBoundaryChar)
+  rangeEndEl = document.createElement 'span'
+  rangeEndEl.className = selectionBoundaryClass
+  rangeEndEl.appendChild(rangeEndText)
+  range.insertNode(rangeEndEl)
+
+  # Cleanup the range from memory
+  range.detach()
+
+
+# Tokenize a RegExp string and return an `Array` of tokens.
+tokenize = (chunk) ->
+  startOffset = oldStartOffset = endOffset = 0
+  tokens = []
+
+  # Selection boundary indices
+  selectionIndices = getIndices(chunk, selectionBoundaryChar)
+  accountedIndices = 0
+
+  # Remove selection boundaries
+  chunk = chunk.replace(/√+/g, '')
+  length = chunk.length
+
+  # Iterate the remaining RegExp string until its all gone
+  `chunking://`
+  while chunk
+    #`
+
+    for tokenKind in tokenPriority
+      unless match = tokenRegex[tokenKind].exec chunk
+        continue
+
+      # Prologue only valid at 0
+      if tokenKind in ['PROLOGUE', 'SINGLELINE_PROLOGUE'] and startOffset isnt 0
+        continue
+
+      [matchedText] = match
+
+      if tokenKind in ['SINGLELINE_PROLOGUE', 'SINGLELINE_EPILOGUE']
+        matchedText = matchedText.replace(/\//, '///')
+
+      endOffset = startOffset + matchedText.length
+
+      chunk = chunk[matchedText.length..]
+      oldStartOffset = startOffset
+      startOffset = endOffset
+
+      if tokenKind is 'WHITESPACE'
+        `continue chunking`
+
+      if tokenKind is 'LINEBOUNDARY'
+        `continue chunking`
+
+      tokenSelectionIndices = []
+
+      while selectionIndices.length
+        index = selectionIndices[0] - accountedIndices
+        if (oldStartOffset <= index <= endOffset) or (index is endOffset and index is length)
+          tokenSelectionIndices.push(index - oldStartOffset)
+          accountedIndices++
+          selectionIndices.shift()
+        else break
+
+      matchedText = matchedText.replace(/∆/g, '')
+      tokens.push [tokenKind, matchedText, tokenSelectionIndices]
+      `continue chunking`
+
+    # Sometimes we get a character we didn't account for.
+    # Eat the next character to prevent an infinite loop.
+    console.warn 'Fucked up character that did not match a token...',
+      'previous', tokens[tokens.length - 1],
+      'last', chunk[0],
+      'chunk', chunk
+    chunk = chunk[1..]
+
+  return tokens
+
+# Takes a RegExp string and attempts to match the test area.
 testRegExpMatch = (regExpStr) ->
-  # Break apart the regExpStr into its components
-  regExpStr = regExpStr
-    .replace(/[√∆]+/g, '') # Remove decorators from body
+  # Remove decorators from body.
+  regExpStr = regExpStr.replace(/[√∆]+/g, '') 
+
+  # Break apart the regExpStr into its components.
   match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
+
   unless match
     return
 
   [regExpStr, body, flags] = match
 
-  body = body
-    .replace(/[√∆]+/g, '') # Remove decorators from body
-    .replace(/([^\\])\s/g, ($0, $1) -> $1) # removes unescapde whitespace
+  # Removes unescapde whitespace.
+  body = body.replace(/([^\\])\s/g, ($0, $1) -> $1)
 
   try
     regExp = new RegExp(body, flags)
@@ -278,7 +276,8 @@ formatRegExp = (regExpStr) ->
     .replace(/∆+/g, '') # Remove decorators from body
     .replace(/√[\r\n]/g, '√∆')
     .replace(/[\r\n]√/g, '∆√')
-    .replace(/[ \t\r\n]+/g, '')
+    .replace(/[\t\r\n]+/g, '')
+    .replace(/([^\\])[ ]+/g, ($0, $1) -> $1)
 
   tokens = tokenize(regExpStr)
   formatter = new Formatter(tokens)
@@ -288,19 +287,37 @@ formatRegExp = (regExpStr) ->
   workareaEl.innerHTML = ''
   workareaEl.appendChild(formattedEl)
 
-  # Reset the selection ranges
-  clearRanges()
-  addRange(createRange(rangeData.startNode, rangeData.startOffset, rangeData.endNode, rangeData.endOffset))
+  selection = window.getSelection()
+
+  # Reset existing selection ranges
+  if selection.rangeCount
+    selection.removeAllRanges()
+
+  # Add new selection ranges
+  try
+    range = document.createRange()
+    range.setStart(rangeData.startNode, rangeData.startOffset)
+    range.setEnd(rangeData.endNode, rangeData.endOffset)
+    selection.addRange(range)
+  catch err
+    console.error err
+
 
 testareaEl.addEventListener 'keyup', (e) ->
   testRegExpMatch(workareaEl.innerText)
 
 workareaEl.addEventListener 'keyup', (e) ->
+  # Ignoring some characters.
   return if e.keyCode in [
+    16 # ⇧
+    17 # ⌃
+    18 # ⌥
     91 # ⌘
   ]
 
-  clearSelectionBoundaries(workareaEl)
+  for rangeEl in workareaEl.querySelectorAll(".#{selectionBoundaryClass}")
+    rangeEl.parentNode.removeChild(rangeEl)
+
   insertSelectionBoundaries()
 
   testRegExpMatch(workareaEl.innerText)

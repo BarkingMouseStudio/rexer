@@ -1,7 +1,9 @@
 TODO
 ====
 
-* support single-line regex
+* fix down arrow
+  * remove line boundaries before tokenization by indicating
+    with each index its position (before/after break)
 * fix DOM Error 1 (random)
 * fix DOM Error 8 (entering whitespace via backspace)
 
