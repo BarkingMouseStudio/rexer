@@ -103,7 +103,7 @@ tokenRegex =
   GROUP_END: /^\)/
   OR: /^\|/
   RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
-  CHAR_GROUP: /^(\[\^?)((?:(?:[^\\]\\\])|.)+?)\]/
+  CHAR_GROUP: /^(\[\^?)((?:(?:[^\\]\\\])|.)*?)\]/
   OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\s*]+/
   LINEBOUNDARY: /^∆/
   WHITESPACE: /^\s+/
@@ -250,7 +250,7 @@ testRegExpMatch = (regExpStr) ->
   regExpStr = regExpStr.replace(/[√∆]+/g, '') 
 
   # Break apart the regExpStr into its components.
-  match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
+  match = regExpStr.match(/^\/{3}([\s\S]+)\/{3}([imgy]{0,4})$/)
 
   unless match
     return
@@ -320,8 +320,12 @@ workareaEl.addEventListener 'keyup', (e) ->
 
   insertSelectionBoundaries()
 
-  testRegExpMatch(workareaEl.innerText)
-  formatRegExp(workareaEl.innerText)
+  regExpStr = workareaEl.innerText
+    .replace(/∆+/g, '') # Remove existing decorators from body
+    .replace(/√[\r\n]/g, '√∆')
+    .replace(/[\r\n]√/g, '∆√')
+    .replace(/[\t\r\n]+/g, '')
+    .replace(/([^\\])[ ]+/g, ($0, $1) -> $1)
 
-testRegExpMatch(workareaEl.innerText)
-formatRegExp(workareaEl.innerText)
+  formatRegExp(regExpStr)
+  testRegExpMatch(regExpStr)
