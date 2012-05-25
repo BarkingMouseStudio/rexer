@@ -250,7 +250,7 @@ testRegExpMatch = (regExpStr) ->
   regExpStr = regExpStr.replace(/[√∆]+/g, '') 
 
   # Break apart the regExpStr into its components.
-  match = regExpStr.match(/^\/{3}([\s\S]+)\/{3}([imgy]{0,4})$/)
+  match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
 
   unless match
     return
@@ -272,12 +272,60 @@ testRegExpMatch = (regExpStr) ->
     console.error err.message
 
 formatRegExp = (regExpStr) ->
+
+
+testareaEl.addEventListener 'keyup', (e) ->
+  testRegExpMatch(workareaEl.innerText)
+
+workareaEl.addEventListener 'keyup', (e) ->
+  # Ignoring some characters.
+  ### return if e.keyCode in [
+    16 # ⇧
+    17 # ⌃
+    18 # ⌥
+    91 # ⌘
+  ] ###
+
+
+  for rangeEl in workareaEl.querySelectorAll(".#{selectionBoundaryClass}")
+    rangeEl.parentNode.removeChild(rangeEl)
+
+  testRegExpMatch(workareaEl.innerText)
+
+  insertSelectionBoundaries()
+
+  # Cleanup the string and do some tricky handling
+  # of line-boundaries so that the cursor ends up in
+  # the right place.
+
+  # Remove decorators from body
+  regExpStr = regExpStr.replace(/∆+/g, '')
+
   regExpStr = regExpStr
-    .replace(/∆+/g, '') # Remove decorators from body
-    .replace(/√[\r\n]/g, '√∆')
-    .replace(/[\r\n]√/g, '∆√')
+    # Character after EOL
+    .replace(/[\r\n](√+)/g, '∆$1')
+
+    # Character before EOL
+    .replace(/(√+)[\r\n]/g, '$1∆')
+
+    # Character inside spacing at the beginning of a line
+    .replace(/[\r\n][ ]+(√+)[ ]+/g, '$1∆')
+
+    # Character at the beginning of characters on the line
+    .replace(/[\r\n][ ]+(√+)/g, '∆$1')
+
+  regExpStr = regExpStr
+    # Remove most whitespace
     .replace(/[\t\r\n]+/g, '')
+
+    # Remove any unescaped spaces
     .replace(/([^\\])[ ]+/g, ($0, $1) -> $1)
+
+  if e.keyCode is 38 # ↑
+    console.log 'UP'
+
+  if e.keyCode is 40 # ↓
+    console.log 'DOWN'
 
   tokens = tokenize(regExpStr)
   formatter = new Formatter(tokens)
@@ -301,31 +349,3 @@ formatRegExp = (regExpStr) ->
     selection.addRange(range)
   catch err
     console.error err
-
-
-testareaEl.addEventListener 'keyup', (e) ->
-  testRegExpMatch(workareaEl.innerText)
-
-workareaEl.addEventListener 'keyup', (e) ->
-  # Ignoring some characters.
-  return if e.keyCode in [
-    16 # ⇧
-    17 # ⌃
-    18 # ⌥
-    91 # ⌘
-  ]
-
-  for rangeEl in workareaEl.querySelectorAll(".#{selectionBoundaryClass}")
-    rangeEl.parentNode.removeChild(rangeEl)
-
-  insertSelectionBoundaries()
-
-  regExpStr = workareaEl.innerText
-    .replace(/∆+/g, '') # Remove existing decorators from body
-    .replace(/√[\r\n]/g, '√∆')
-    .replace(/[\r\n]√/g, '∆√')
-    .replace(/[\t\r\n]+/g, '')
-    .replace(/([^\\])[ ]+/g, ($0, $1) -> $1)
-
-  formatRegExp(regExpStr)
-  testRegExpMatch(regExpStr)
