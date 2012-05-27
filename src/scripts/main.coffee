@@ -1,79 +1,84 @@
+makeEl = (tagName='div', className='') ->
+  el = document.createElement(tagName)
+  el.className = className
+  return el
+
+makeTextEl = (tagName='div', className='', value='') ->
+  textEl = makeEl(tagName, className)
+  textEl.appendChild(document.createTextNode(value))
+  return textEl
+
+appendText = (parentEl, value, className='WHITESPACE') ->
+  textEl = makeTextEl('span', className, value)
+  parentEl.appendChild(textEl)
+  return textEl
+
+# Get two-spaced indent text for a given indent-level
+getIndentText = (indent) ->
+  ('  ' while indent-- > 0).join('')
+
 # Formats a token array into a DOM element.
-class Formatter
-  constructor: (tokens) ->
-    @tokens = tokens.slice 0
-    @currentParentEl = @formattedEl = document.createElement 'div'
-    @previousParentEls = []
-    @indent = 0
+format = (tokens) ->
+  tokens = tokens.slice 0
+  currentParentEl = formattedEl = document.createElement 'div'
+  previousParentEls = []
+  indent = 0
+  rangeData = {}
 
-  indentText: ->
-    i = @indent
-    @appendText '  ', 'INDENT' while i-- > 0
+  while token = tokens.shift()
+    [tag, value, indices] = token 
+    switch tag
+      when 'GROUP_START'
+        newParentEl = document.createElement 'div'
+        newParentEl.className = 'group_wrapper'
+        currentParentEl.appendChild(newParentEl)
+        previousParentEls.push(currentParentEl)
+        currentParentEl = newParentEl
 
-  appendText: (value, tag = '') ->
-    textNode = document.createTextNode(value)
-    textEl = document.createElement 'span'
-    textEl.className = "token #{tag?.toLowerCase()}"
-    textEl.appendChild(textNode)
-    @currentParentEl.appendChild(textEl)
-    return textEl
+        appendText(currentParentEl, getIndentText(indent))
+        contentEl = appendText(currentParentEl, value, "token #{tag.toLowerCase()}") # append `(`
 
-  format: ->
-    rangeData = {}
+        newParentEl = document.createElement 'div'
+        newParentEl.className = 'group_content'
+        currentParentEl.appendChild(newParentEl)
+        previousParentEls.push(currentParentEl)
+        currentParentEl = newParentEl
 
-    while token = @tokens.shift()
-      [tag, value, indices] = token 
-      switch tag
-        when 'GROUP_START'
-          newParentEl = document.createElement 'div'
-          newParentEl.className = 'group_wrapper'
-          @currentParentEl.appendChild(newParentEl)
-          @previousParentEls.push(@currentParentEl)
-          @currentParentEl = newParentEl
+        indent++
+        if tokens[0]?[0] not in ['GROUP_START', 'OR']
+          appendText(currentParentEl, getIndentText(indent))
+      when 'GROUP_END'
+        currentParentEl = previousParentEls.pop()
 
-          @indentText()
-          contentEl = @appendText(value, tag) # append `(`
+        indent--
+        appendText(currentParentEl, getIndentText(indent))
+        contentEl = appendText(currentParentEl, value, "token #{tag.toLowerCase()}") # append `)`
 
-          newParentEl = document.createElement 'div'
-          newParentEl.className = 'group_content'
-          @currentParentEl.appendChild(newParentEl)
-          @previousParentEls.push(@currentParentEl)
-          @currentParentEl = newParentEl
+        currentParentEl = previousParentEls.pop()
+        if tokens[0]?[0] not in ['GROUP_START', 'GROUP_END', 'OR']
+          appendText(currentParentEl, getIndentText(indent))
+      when 'OR'
+        newParentEl = document.createElement 'div'
+        newParentEl.className = 'or'
+        currentParentEl.appendChild(newParentEl)
+        previousParentEls.push(currentParentEl)
+        currentParentEl = newParentEl
 
-          @indent++
-          if @tokens[0]?[0] not in ['GROUP_START', 'OR']
-            @indentText()
-        when 'GROUP_END'
-          @currentParentEl = @previousParentEls.pop()
+        appendText(currentParentEl, getIndentText(indent))
+        contentEl = appendText(currentParentEl, value, "token #{tag.toLowerCase()}") # append `|`
+        currentParentEl = previousParentEls.pop()
+        if tokens[0]?[0] not in ['GROUP_START', 'OR']
+          appendText(currentParentEl, getIndentText(indent))
+      else contentEl = appendText(currentParentEl, value, "token #{tag.toLowerCase()}")
 
-          @indent--
-          @indentText()
-          contentEl = @appendText(value, tag) # append `)`
+    if indices.length
+      [startOffset, endOffset] = indices
+      rangeData.startNode = contentEl.childNodes[0]
+      rangeData.startOffset = startOffset
+      rangeData.endNode = contentEl.childNodes[0]
+      rangeData.endOffset = endOffset
 
-          @currentParentEl = @previousParentEls.pop()
-          if @tokens[0]?[0] not in ['GROUP_START', 'GROUP_END', 'OR']
-            @indentText()
-        when 'OR'
-          newParentEl = document.createElement 'div'
-          newParentEl.className = 'or'
-          @currentParentEl.appendChild(newParentEl)
-          @previousParentEls.push(@currentParentEl)
-          @currentParentEl = newParentEl
-          @indentText()
-          contentEl = @appendText(value, tag) # append `|`
-          @currentParentEl = @previousParentEls.pop()
-          if @tokens[0]?[0] not in ['GROUP_START', 'OR']
-            @indentText()
-        else contentEl = @appendText(value, tag)
-
-      if indices.length
-        [startOffset, endOffset] = indices
-        rangeData.startNode = contentEl.childNodes[0]
-        rangeData.startOffset = startOffset
-        rangeData.endNode = contentEl.childNodes[0]
-        rangeData.endOffset = endOffset
-
-    return [@formattedEl, rangeData]
+  return [formattedEl, rangeData]
 
 
 workareaEl = document.getElementById 'workarea'
@@ -104,9 +109,10 @@ tokenRegex =
   OR: /^\|/
   RANGE: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
   CHAR_GROUP: /^(\[\^?)((?:(?:[^\\]\\\])|.)*?)\]/
-  OTHER: /^[^\#\(\)\|\[\]\?\+\*\^\$\\\s*]+/
+  OTHER: /^[^\(\)\|\[\]\?\+\*\^\$\\\s*]+/
   LINEBOUNDARY: /^∆/
   WHITESPACE: /^\s+/
+  COMMENT: /^[ ]#(.*)$/
 
 # Controls the tokenization priority.
 # There's some overlap in the tokens and a prioritization
@@ -192,8 +198,7 @@ tokenize = (chunk) ->
 
   # Iterate the remaining RegExp string until its all gone
   `chunking://`
-  while chunk
-    #`
+  while chunk #`
 
     for tokenKind in tokenPriority
       unless match = tokenRegex[tokenKind].exec chunk
@@ -235,11 +240,9 @@ tokenize = (chunk) ->
       `continue chunking`
 
     # Sometimes we get a character we didn't account for.
+    console.warn 'Characters not matched by any token:', chunk
+
     # Eat the next character to prevent an infinite loop.
-    console.warn 'Fucked up character that did not match a token...',
-      'previous', tokens[tokens.length - 1],
-      'last', chunk[0],
-      'chunk', chunk
     chunk = chunk[1..]
 
   return tokens
@@ -250,14 +253,17 @@ testRegExpMatch = (regExpStr) ->
   regExpStr = regExpStr.replace(/[√∆]+/g, '') 
 
   # Break apart the regExpStr into its components.
-  match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/)
+  match = regExpStr.match(/^\/{3}([\s\S]+?)\/{3}([imgy]{0,4})$/m)
 
   unless match
-    return
+    return false
 
   [regExpStr, body, flags] = match
 
-  # Removes unescapde whitespace.
+  # Remove comments
+  body = body.replace(/[ ]#(.*)$/, '')
+
+  # Removes unescaped whitespace
   body = body.replace(/([^\\])\s/g, ($0, $1) -> $1)
 
   try
@@ -268,24 +274,22 @@ testRegExpMatch = (regExpStr) ->
       testareaEl.innerText
         .replace(regExp, '<span class="match">$&</span>')
         .replace(/\n/g, '</div><div>') + '</div>'
+    return true
   catch err
     console.error err.message
-
-formatRegExp = (regExpStr) ->
-
+    return false
 
 testareaEl.addEventListener 'keyup', (e) ->
   testRegExpMatch(workareaEl.innerText)
 
 workareaEl.addEventListener 'keyup', (e) ->
-  # Ignoring some characters.
-  ### return if e.keyCode in [
+  return if e.keyCode in [
     16 # ⇧
     17 # ⌃
     18 # ⌥
-    91 # ⌘
-  ] ###
-
+    91 # L⌘
+    93 # R⌘
+  ]
 
   for rangeEl in workareaEl.querySelectorAll(".#{selectionBoundaryClass}")
     rangeEl.parentNode.removeChild(rangeEl)
@@ -297,40 +301,39 @@ workareaEl.addEventListener 'keyup', (e) ->
   # Cleanup the string and do some tricky handling
   # of line-boundaries so that the cursor ends up in
   # the right place.
+  regExpStr = workareaEl.innerText
 
   # Remove decorators from body
   regExpStr = regExpStr.replace(/∆+/g, '')
 
   regExpStr = regExpStr
-    # Character after EOL
-    .replace(/[\r\n](√+)/g, '∆$1')
+    .replace(/[\r\n](√+)/g, '∆$1') # Selection at beginning of line
+    .replace(/(√+)[\r\n]/g, '$1∆') # Selection at end of line
 
-    # Character before EOL
-    .replace(/(√+)[\r\n]/g, '$1∆')
-
-    # Character inside spacing at the beginning of a line
-    .replace(/[\r\n][ ]+(√+)[ ]+/g, '$1∆')
-
-    # Character at the beginning of characters on the line
-    .replace(/[\r\n][ ]+(√+)/g, '∆$1')
+  # Selection inside spacing at beginning of line
+  if e.keyCode is 40 # ↓
+    regExpStr = regExpStr.replace(/[\r\n][ ]+(√+)[ ]+/g, '∆$1')
+  else
+    regExpStr = regExpStr.replace(/[\r\n][ ]+(√+)[ ]+/g, '$1∆')
 
   regExpStr = regExpStr
-    # Remove most whitespace
-    .replace(/[\t\r\n]+/g, '')
+    .replace(/[\r\n][ ]+(√+)/g, '∆$1') # Selection at beginning of characters on line
+    .replace(/[\t\r\n]+/g, '') # Remove most whitespace
 
-    # Remove any unescaped spaces
-    .replace(/([^\\])[ ]+/g, ($0, $1) -> $1)
+  console.log regExpStr
 
-  if e.keyCode is 38 # ↑
-    console.log 'UP'
+  regExpStr = regExpStr
+    .replace /(?:([ ]\[))|(?:([^\\])[ ]+)/g, ($0, $1, $2) ->
+      console.log $1
+      $1 or $2 # Remove any unescaped spaces
+  console.log regExpStr
 
-  if e.keyCode is 40 # ↓
-    console.log 'DOWN'
+  regExpStr = regExpStr
+    .replace(/∆(√+)∆/g, '$1∆') # Selection within line breaks (backspacing a now empty line)
 
   tokens = tokenize(regExpStr)
-  formatter = new Formatter(tokens)
 
-  [formattedEl, rangeData] = formatter.format()
+  [formattedEl, rangeData] = format(tokens)
 
   workareaEl.innerHTML = ''
   workareaEl.appendChild(formattedEl)
@@ -348,4 +351,4 @@ workareaEl.addEventListener 'keyup', (e) ->
     range.setEnd(rangeData.endNode, rangeData.endOffset)
     selection.addRange(range)
   catch err
-    console.error err
+    console.error 'Failed to add range:', err

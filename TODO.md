@@ -1,25 +1,35 @@
 TODO
 ====
 
-* fix down arrow
 * fix DOM Error 1 (random)
-* fix DOM Error 8 (entering whitespace via backspace)
 
 
 FEATURES
 ========
 
+1. inline comments
+2. gist share w/ url shortener
+3. line numbers
+4. interactive tutorial
+5. code-folding
+
+
+Formatting
+----------
+
+* put prologue/epilogue on new lines
 * put quantifiers on group_end line
-* line numbers
-* inline comments (Danielle is writing copy)
-* highlighting current
-* interactive tutorial
-* gist share w/ url shortener
 
 
 NICE-TO-HAVES
 =============
 
-* code-folding
+* highlighting current
 * auto-correct/escape invalid regexp
 * auto-suggestions
+
+1. KEYUP
+2. LEX - naive lexer
+3. REWRITE - repair/cleanup regex (repair parentheticals)
+4. FORMAT
+5. TEST
