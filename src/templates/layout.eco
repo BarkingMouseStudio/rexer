@@ -8,7 +8,7 @@
   <meta name="author" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <title>rexer: king regex</title>
+  <title>Rexer - King Regex</title>
 
   <link href="/favicon.png" rel="shortcut icon">
 
@@ -16,6 +16,14 @@
 <body>
 
   <%- @body %>
+
+  <script src="/codemirror/lib/codemirror.js"></script>
+  <link href="/codemirror/lib/codemirror.css" rel="stylesheet">
+
+  <link href="/styles/rexer.css" rel="stylesheet">
+  <script src="/scripts/rexer.js"></script>
+  <script src="/codemirror/lib/util/searchcursor.js"></script>
+  <script src="/scripts/highlight-matches.js"></script>
 
   <script src="/scripts/main.js"></script>
 

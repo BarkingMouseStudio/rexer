@@ -1,0 +1,28 @@
+$comment-color = #ccc
+$group-color = rgba(0, 0, 0, 0.4)
+$or-color = $group-color
+$escaped-char-color = #c44
+$quantifier-color = #4a4
+$char-group-color = #44a
+
+.cm-s-rexer
+  .cm-comment
+    color $comment-color
+
+  .cm-group_start
+  .cm-group_end
+    color $group-color
+
+  .cm-escaped_char
+  .cm-special_char
+  .cm-whitespace_char
+    color $escaped-char-color
+
+  .cm-or
+    color $or-color
+
+  .cm-char_group
+    color $char-group-color
+
+  .cm-quantifier
+    color $quantifier-color

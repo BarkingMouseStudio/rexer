@@ -1,32 +1,22 @@
-$header-background-color = #645752
+$background-color = #645752
 $header-text-color = #cccbca
 $header-link-color = #eff2f2
 $left-background-color = #ca5554
 $right-background-color = #bfb1a1
-$text-color = black
-$background-color = #f8f8f8
 $match-background = #ffc
 $match-border = #cc2
-$warn-color = #884
-$comment-color = #ccc
-$char-group-color = #44a
-$escaped-char-color = #c44
-$quantifier-color = #4a4
-$group-color = rgba(0, 0, 0, 0.4)
-$or-color = $group-color
 
 body
-  box-sizing border-box
   margin 0
   padding 0
+  box-sizing border-box
   background $background-color
   font-family 'Helvetica Neue', Arial, sans-serif
   font-size 14px
-  color $text-color
-
+  color black
+  
 .main-header
 .main-footer
-  background $header-background-color
   color $header-text-color
   padding 20px
   overflow hidden
@@ -67,7 +57,6 @@ body
 
 .columns
   overflow hidden
-  background $right-background-color
 
   > .left
   > .right
@@ -76,72 +65,54 @@ body
 
     header
       color white
-      padding 20px 40px
+
+      a
+        color white
 
       h3
         font-weight 200
         margin 0
+        padding 20px 40px
+
+      h4
+        font-weight 200
+        margin 0
+        padding 8px 40px
+
+    .CodeMirror
+      background white
+      font-size 12px
+      font-family 'PT Mono', monospace
+      line-height 18px
+
+      .CodeMirror-scroll
+        height auto
+        overflow visible
+        min-height 400px
+
+      .CodeMirror-lines
+        padding 10px
+
+      .CodeMirror-gutter-text
+        padding 10px
+
+      .CodeMirror-matchhighlight
+        background $match-background
+        outline 1px solid $match-border
 
   > .left
-    background $left-background-color
+    h3
+      background $left-background-color
 
-.outer
-  border-top-left-radius 4px
-  padding 0 0 0 40px
+    h4
+      background lighten($left-background-color, 60%)
 
-  .inner
-    padding 20px
-    cursor text
-    background white
-    color $text-color
-    line-height 18px
-    font-size 12px
-    font-family 'PT Mono', monospace
+    .CodeMirror
+      border-right 1px solid #ccc
 
-    &:focus
-      outline none
+  > .right
+    h3
+      background $right-background-color
 
-.testarea
-
-  .match
-    border 1px solid $match-border
-    background $match-background
-    border-radius 2px
-
-  div
-    margin 0 0 10px
-
-.workarea
-
-  span.suggestion
-    color $comment-color
-
-  div, ol
-    margin 0
-    padding 0
-    white-space pre
-
-  .token
-    &.comment
-      color $comment-color
-
-      &.warn
-        color $warn-color
-
-    &.group_start
-    &.group_end
-      color $group-color
-
-    &.escaped_char
-    &.special_char
-    &.whitespace_char
-      color $escaped-char-color
-
-    &.or
-      color $or-color
-
-    &.char_group
-      color $char-group-color
-
-    &.quantifier
-      color $quantifier-color
+    h4
+      background lighten($right-background-color, 60%)

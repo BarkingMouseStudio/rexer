@@ -10,23 +10,16 @@
   <div class='left'>
     <header>
       <h3>RegExp</h3>
+      <h4>Click <a href='#'>here</a> to start the interactive tutorial...</h4>
     </header>
-    <div class='outer'>
-      <aside id='line-numbers'></aside>
-      <div id='workarea' class='workarea inner' spellcheck='false' contenteditable>/\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi</div>
-    </div>
+    <div id='workarea'></div>
   </div>
   <div class='right'>
     <header>
       <h3>Tests</h3>
+      <h4>&nbsp;</h4>
     </header>
-    <div class='outer'>
-      <div id='testarea' class='testarea inner' spellcheck='false' contenteditable>
-        <div>http://applio.us/</div>
-        <div>http://asdasd/</div>
-        <div>https://mail.google.com/</div>
-      </div>
-    </div>
+    <div id='testarea'></div>
   </div>
 </div>
 
