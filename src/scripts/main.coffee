@@ -1,6 +1,6 @@
 workarea = CodeMirror document.getElementById('workarea'),
   value: '''
-    ///\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'".,<>?«»“”‘’]))///gi
+    /// http:\/\/(\\w+)\/ ///gi
     '''
   mode:  'rexer'
   lineWrapping: true
@@ -9,7 +9,6 @@ workarea = CodeMirror document.getElementById('workarea'),
   autoClearEmptyLines: true
   tabSize: 2
   lineNumbers: true
-  indentWithTabs: true
   theme: 'rexer'
   onChange: ->
     testarea.highlightMatches(workarea.getValue())
@@ -20,8 +19,10 @@ testarea = CodeMirror document.getElementById('testarea'),
   lineWrapping: true
   tabindex: 1
   tabSize: 2
-  indentWithTabs: true
   onChange: ->
     testarea.highlightMatches(workarea.getValue())
 
 testarea.highlightMatches(workarea.getValue())
+
+workarea.autoFormatRange(workarea.posFromIndex(0), workarea.posFromIndex(workarea.getValue().length))
+workarea.refresh()

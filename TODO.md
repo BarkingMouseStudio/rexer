@@ -1,35 +1,27 @@
 TODO
 ====
 
-* fix DOM Error 1 (random)
+* Re-implement auto formatting
+* Implement type-ahead formatting
 
+* Auto-generated inline comments
+* Code-folding
+  * Highlighting current block
 
-FEATURES
-========
+* Interactive tutorial
+  * Click slides down interface / instructions
+  * Workarea clears (or is prefilled and focused) and testarea updates
+  * Learn to match useful stuff, phone numbers, names, email addresses
+    * .
+    * \w
+    * \d
+    * \s
+    * character groups
+    * quantifiers
+    * capture groups
+    * flags
 
-1. inline comments
-2. gist share w/ url shortener
-3. line numbers
-4. interactive tutorial
-5. code-folding
+* Auto-suggestions
+* Auto-correct/escape invalid regexp
 
-
-Formatting
-----------
-
-* put prologue/epilogue on new lines
-* put quantifiers on group_end line
-
-
-NICE-TO-HAVES
-=============
-
-* highlighting current
-* auto-correct/escape invalid regexp
-* auto-suggestions
-
-1. KEYUP
-2. LEX - naive lexer
-3. REWRITE - repair/cleanup regex (repair parentheticals)
-4. FORMAT
-5. TEST
+* Gist share w/ url shortener

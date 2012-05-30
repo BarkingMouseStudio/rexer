@@ -1,27 +1,31 @@
-CodeMirror.modeExtensions['css'] =
+CodeMirror.modeExtensions or= {}
+
+CodeMirror.modeExtensions['rexer'] =
   autoFormatLineBreaks: (text) ->
-    return text.replace(/(;|\{|\})([^\r\n])/g, '$1\n$2')
+    return text
+      .replace(/^\/{3}\s+/, '///\n')
+      .replace(/\s+\/{3}([imgy]{0,4})$/, '\n///$1')
+      .replace(/\((.*)\)/g, '\n(\n$1\n)\n')
 
 CodeMirror.defineMode 'rexer', (config, mode) ->
-  indentUnit = config.indentUnit
+  { indentUnit } = config
 
   tokenRegExps =
-    prologue: /^\/{3}/
-    epilogue: /^\/{3}([imgy]{0,4})∆*$/
+    prologue: /^\/{3}\s+/
+    epilogue: /^\s*\/{3}([imgy]{0,4})$/
     special_char: /^\\[wWdDsSbB]/
     whitespace_char: /^\\[tnr]/
     escaped_char: /^\\./
+    escaped_dollar: /^\${2}/
     input_start: /^\^/
     input_end: /^\$/
-    escaped_dollar: /^\${2}/
     quantifier: /^(?:(\?)|([\+\*]\??))/
-    group_start: /^\((\?(?:(?:\:)|(?:\=)|(?:\!)|(?:\<\=)|(?:\<\!))?)?/
-    group_end: /^\)/
-    or: /^\|/
     range: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
+    group_start: /^\((?:(?:\?\:)|(?:\?\=)|(?:\?\!)|(?:\?\<\=)|(?:\?\<\!))?/
+    group_end: /^\)/
     char_group: /^(\[\^?)((?:(?:[^\\]\\\])|.)*?)\]/
-    other: /^[^\(\)\|\[\]\?\+\*\^\$\\\s*]+/
-    whitespace: /^\s+/
+    or: /^\|/
+    other: /^[^\(\)\|\[\]\?\+\*\^\$\\\s]+/
     comment: /^[ ]#(.*)$/
 
   tokenPriority = [
@@ -29,7 +33,6 @@ CodeMirror.defineMode 'rexer', (config, mode) ->
     'whitespace_char'
     'escaped_char'
     'comment'
-    'whitespace'
     'input_start'
     'escaped_dollar'
     'input_end'
@@ -49,11 +52,19 @@ CodeMirror.defineMode 'rexer', (config, mode) ->
       unless match = stream.match(tokenRegExps[tokenKind])
         continue
 
+      currentLength = stream.current().length
+
+      if tokenKind is 'prologue' and state.offset isnt 0
+        stream.backUp(currentLength)
+        continue
+
+      state.offset += currentLength
+
       if tokenKind is 'group_start'
-        state.stack.push('(')
+        state.indented++
 
       if tokenKind is 'group_end'
-        state.stack.pop(')')
+        state.indented--
 
       return tokenKind.toLowerCase()
 
@@ -62,32 +73,16 @@ CodeMirror.defineMode 'rexer', (config, mode) ->
 
   return {
     startState: (base) ->
-      indented: base
+      indented: base or 0
       tokenize: tokenize
-      stack: []
+      offset: 0
 
     token: tokenize
 
     indent: (state, textAfter) ->
+      if tokenRegExps.group_end.test(textAfter)
+        state.indented--
       return state.indented * indentUnit
-
-      ###
-      if state.tokenize isnt tokenize and state.tokenize isnt null
-        return 0
-
-      ctx = state.context
-      firstChar = textAfter and textAfter.charAt(0)
-      if ctx.type is "statement" and firstChar is "}"
-        ctx = ctx.prev
-
-      closing = firstChar is ctx.type
-      if ctx.type is "statement"
-        return ctx.indented + (if firstChar is "{" then 0 else indentUnit)
-      else if ctx.align
-        return ctx.column + (if closing then 0 else 1)
-      else
-        return ctx.indented + (if closing then 0 else indentUnit)
-      ###
 
     electricChars: '\/()|'
   }
