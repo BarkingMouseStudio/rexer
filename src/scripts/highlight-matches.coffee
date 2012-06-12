@@ -15,14 +15,19 @@ CodeMirror.defineExtension 'highlightMatches', (matchOn) ->
   clearMarks(this)
   state = getHighlightMatchesState(this)
 
-  matchOnParts = matchOn.match(/^\/{3}([\S\s]+?)\/{3}([imgy]{0,4})$/m)
+  matchOnParts = matchOn.match(/^\/{3}\s+([\S\s]+?)\s+\/{3}([imgy]{0,4})$/m)
 
   unless matchOnParts
     return
 
   [matchOn, matchOnBody, matchOnFlags] = matchOnParts
 
-  matchOnRegExp = new RegExp(matchOnBody.replace(/\//g, '\\/'), matchOnFlags)
+  matchOnBody = matchOnBody
+    .replace(/[ ]#(.*)$/m, '')
+    .replace(/([^\\])\s+/g, '$1')
+    .replace(/\//g, '\\/')
+
+  matchOnRegExp = new RegExp(matchOnBody, matchOnFlags)
 
   @operation =>
     unless @lineCount() < 2000 # expensive on big documents

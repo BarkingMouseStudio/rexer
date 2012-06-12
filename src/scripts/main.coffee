@@ -1,6 +1,7 @@
 workarea = CodeMirror document.getElementById('workarea'),
   value: '''
-    /// http:\/\/(\\w+)\/ ///gi
+    /// \\b((?:https?:\/\/|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}\/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'".,<>?«»“”‘’])) # this is a test
+    ///gi
     '''
   mode:  'rexer'
   lineWrapping: true

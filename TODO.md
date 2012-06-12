@@ -2,11 +2,11 @@ TODO
 ====
 
 * Re-implement auto formatting
+  * Handle nonbreakable-blocks
+  * Handle formatting on paste/etc.
 * Implement type-ahead formatting
-
+  * Handle new-line auto-insertion
 * Auto-generated inline comments
-* Code-folding
-  * Highlighting current block
 
 * Interactive tutorial
   * Click slides down interface / instructions
@@ -21,7 +21,11 @@ TODO
     * capture groups
     * flags
 
+* Code-folding
+  * Highlighting current block
+
 * Auto-suggestions
 * Auto-correct/escape invalid regexp
+* RegExp hint!
 
-* Gist share w/ url shortener
+* Danielle: Gist share w/ url shortener

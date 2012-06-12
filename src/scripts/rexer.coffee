@@ -1,11 +1,80 @@
 CodeMirror.modeExtensions or= {}
 
 CodeMirror.modeExtensions['rexer'] =
+  commentStart: "###",
+  commentEnd: "###",
+
+  getNonBreakableBlocks: (text) ->
+    nonBreakableRegExps = [
+      /(\[\^?)((?:(?:[^\\]\\\])|.)*?)\]/ # char group
+      /[ ]#(.*)$/m # comment
+      # escaped characters!!!
+    ]
+
+    nonBreakableBlocks = []
+
+    for nonBreakableRegExp in nonBreakableRegExps
+      offset = 0
+
+      while offset < text.length
+        match = text.substr(offset).match(nonBreakableRegExp)
+
+        break unless match
+
+        [matchedText] = match
+        length = matchedText.length
+
+        nonBreakableBlocks.push
+          text: matchedText
+          start: offset + match.index
+          end: offset + match.index + length
+
+        offset += match.index + Math.max(1, length)
+
+    nonBreakableBlocks.sort (a, b) ->
+      a.start - b.start
+
   autoFormatLineBreaks: (text) ->
-    return text
-      .replace(/^\/{3}\s+/, '///\n')
-      .replace(/\s+\/{3}([imgy]{0,4})$/, '\n///$1')
-      .replace(/\((.*)\)/g, '\n(\n$1\n)\n')
+    lineSplitter = ///
+      (
+        [^\\]
+      )
+      (
+        (?:
+          (?:\|)
+          |
+          (?:\((?:(?:\?\:)|(?:\?\=)|(?:\?\!)|(?:\?\<\=)|(?:\?\<\!))?)
+          |
+          (?:\)
+            (?:
+              (?:\?)
+              |
+              (?:[\+\*]\??)
+            )?
+          )
+        )
+        (?:\s+\#[ ].*$)?
+      ) ///gm
+
+    if nonBreakableBlocks = @getNonBreakableBlocks(text)
+      result = ''
+      offset = 0
+
+      for nonBreakableBlock in nonBreakableBlocks
+        if nonBreakableBlock.start > offset # break lines till the block
+          result += text.substring(offset, nonBreakableBlock.start).replace(lineSplitter, '$1\n$2')
+          offset = nonBreakableBlock.start
+
+        if nonBreakableBlock.start <= offset <= nonBreakableBlock.end # skip non-breakable block
+          result += text.substring(offset, nonBreakableBlock.end)
+          offset = nonBreakableBlock.end
+
+      if offset < text.length - 1
+        result += text.substr(offset).replace(lineSplitter, '$1\n$2')
+
+      return result
+
+    return text.replace(lineSplitter, '$1\n$2')
 
 CodeMirror.defineMode 'rexer', (config, mode) ->
   { indentUnit } = config
@@ -23,10 +92,19 @@ CodeMirror.defineMode 'rexer', (config, mode) ->
     range: /^\{(?:(\d*,\d+)|(\d+,\d*))\}/
     group_start: /^\((?:(?:\?\:)|(?:\?\=)|(?:\?\!)|(?:\?\<\=)|(?:\?\<\!))?/
     group_end: /^\)/
-    char_group: /^(\[\^?)((?:(?:[^\\]\\\])|.)*?)\]/
+    char_group: /// ^
+      (\[\^?)
+      (
+        (
+          ([^\\]\\\])|.
+        )*
+      )
+      \]
+      ///
     or: /^\|/
     other: /^[^\(\)\|\[\]\?\+\*\^\$\\\s]+/
     comment: /^[ ]#(.*)$/
+    whitespace: /^\s+/
 
   tokenPriority = [
     'special_char'
@@ -44,6 +122,7 @@ CodeMirror.defineMode 'rexer', (config, mode) ->
     'char_group'
     'prologue'
     'epilogue'
+    'whitespace'
     'other'
   ]
 
@@ -86,47 +165,3 @@ CodeMirror.defineMode 'rexer', (config, mode) ->
 
     electricChars: '\/()|'
   }
-
-###
-///
-(
-  (?:
-    https?://
-    |
-    wwwd{0,3}[.]
-    |
-    [a-z0-9.-]+[.][a-z]{2,4}/
-  )
-  (?:
-    [^s()&lt;&gt;]+
-    |
-    (
-      (
-        [^s()&lt;&gt;]+
-        |
-        (
-          (
-            [^s()&lt;&gt;]+
-          )
-        )
-      )*
-    )
-  )+
-  (?:
-    (
-      (
-        [^s()&lt;&gt;]+
-        |
-        (
-          (
-            [^s()&lt;&gt;]+
-          )
-        )
-      )*
-    )
-    |
-    [^s`!()[]{};:'".,&lt;&gt;?«»“”‘’]
-  )
-)
-///gi
-###
